@@ -19,15 +19,15 @@ start:
         movl $0xf232f230, 0xB8008
         movl $0xf235f230, 0xB800C
         movl $0xf236f238, 0xB8010
-        movl $0xf25f, 0xB8014       #下划线
-        movl $0xf2B6f2D2, 0xB8016   #姓名
-        movl $0xf2D3f2D7, 0xB801A
-        movl $0xf2BAf2B0, 0xB801E
+        # movw $0xf25f, 0xB8014       #下划线
+        # movl $0xf2B6f2D2, 0xB8016   #姓名
+        # movl $0xf2D3f2D7, 0xB801A
+        # movl $0xf2BAf2B0, 0xB801E
         # movl $0xf242f250, 0xB8000
         # movl $0xf242f250, 0xB8000
         # movl $0xf242f250, 0xB8000
-        # movb $0x46, %al
-        # movw $0x3F8, %dx
-        # outb %al, %dx
+        movb $0x46, %al   
+        movw $0x3F8, %dx
+        outb %al, %dx
         nop
         nop
