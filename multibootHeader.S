@@ -15,12 +15,12 @@ check_ITEM_NAME = -0X1BADB002;#check
 .code32 #声明为32位代码
 start:
         /*the output of VGA*/
-        movl $0xf242f250, 0xB8000   #学号
+        movl $0xf242f250, 0xB8000 #学号PB20020586
         movl $0xf230f232, 0xB8004
         movl $0xf232f230, 0xB8008
         movl $0xf235f230, 0xB800C
         movl $0xf236f238, 0xB8010
-        movw $0xf200, 0xB8014       #下划线
+        movw $0xf200, 0xB8014     #下划线
         movl $0xf265f268, 0xB8016 #hello,myos!
         movl $0xf26cf26c, 0xB801A
         movl $0xf22cf26f, 0xB801E
