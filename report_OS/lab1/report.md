@@ -54,7 +54,7 @@
 
 * VGA输出：
 
-  > 仿照ppt直接在正确的位置写入显存即可
+  > 按照VGA输出规则(ppt所给)直接在正确的位置写入显存即可
 
 * 串口输出：
 
@@ -164,7 +164,25 @@
 
 * 运行结果截图
 
-  
+  VGA输出：
+  <img src="image/vga.png" alt="image" style="zoom:67%;" />
+  串口输出：
+  ![image](image/uart.png)
+
+### 遇到的问题及解决
+
+1. sudo apt install qemu后仍无法使用qemu-system-i386命令.
+
+   >  解决:使用sudo apt install qemu-system-x86
+
+2. 串口输出重复，VGA输出闪烁
+
+   > 解决：在代码段末尾加入hlt停机指令
 
 ### 总结与思考
 
+* 在本次实验的环境准备过程中，我进一步熟悉了解linux环境和常用命令
+
+* 通过本次实验我简单了解了AT&T汇编语言，能根据ppt所给示例利用VGA和串口进行输出
+
+* 通过阅读multibootheader协议简要了解了multiboot的启动原理，能够正确编写multibootheader在qemu环境下启动。
