@@ -1,4 +1,4 @@
-.global start
+.globl start
 /*定义协议要求的参数*/
 magic_ITEM_NAME = 0X1BADB002;#magic
 flag_ITEM_NAME = 0X00000000;#flag
@@ -66,6 +66,6 @@ start:
         outb %al, %dx
         movb $0x67, %al
         outb %al, %dx
+        nop
+        nop
         hlt
-        nop
-        nop
