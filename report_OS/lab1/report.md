@@ -62,11 +62,15 @@
 
 ### 代码结构与编译运行
 
+#### 代码布局
+
+​	根据multibootheader.ld的内容，makefile从1M的位置开始链接，首先放入12个字节的multibootheader的内容，使用ALIGN(8)对齐然后放入.text代码段对应内容。
+
 #### 代码分析
 
 1. multibootheader编写
 
-	根据multiboot协议magic，flags，checksum是必须的。根据协议介绍magic值为0x1BADB002，本实验暂不需要设置flag的各位设为0X00000000，checksum与magic相加应为0，故其为-0X1BADB002。设置它们的值并声明，代码如下。
+	根据multiboot协议magic，flags，checksum是必须的。根据协议介绍magic值为0x1BADB002，本实验暂不需要设置flag的各位设为0X00000000，checksum与magic和flag相加应为0，故其为-0X1BADB002。设置它们的值并声明，代码如下。
    
    ```assembly
     /*定义协议要求的参数*/
