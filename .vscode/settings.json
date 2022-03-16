@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "uart.h": "c",
-        "vsprintf.h": "c"
+        "vsprintf.h": "c",
+        "io.h": "c",
+        "stdarg.h": "c"
     }
 }
