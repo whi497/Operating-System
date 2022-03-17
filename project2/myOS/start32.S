@@ -20,7 +20,7 @@ establish_stack:
     # movl    $????????, %eax     # 填入正确的内容
     # addl    $STACK_SIZE, %eax   # make room for stack
     # andl    $0xffffffe0, %eax   # align
-    movl    $????????, %eax     # 填入栈底地址//TODO    
+    movl    $0xFFFFFF, %eax     # 填入栈底地址//TODO//done    
 	
     movl    %eax, %esp          # set stack pointer
     movl    %eax, %ebp          # set base pointer
