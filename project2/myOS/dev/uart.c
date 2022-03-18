@@ -7,16 +7,16 @@
  * 使用封装好的 outb 函数 */
 void uart_put_char(unsigned char ch) {
     /* todo//done*/
-    if(ch=='\n') outb(0x68,'\r');
-    else outb(0x68,ch);
+    // if(ch=='\n'|ch=='\r') outb(0x3F8,'\r');
+    // else
+     outb(0x3F8,ch);
 }
 
 /* 向串口输出一个字符串
  * 此函数接口禁止修改 */
 void uart_put_chars(char *str) {
     /* todo//done*/
-    int i=0;
-    for(;str[i]!='\0';i++){
-        uart_put_chars(str[i]);
+    for (int i = 0;str[i]!='\0';i++){
+        uart_put_char(str[i]);
     }
 }

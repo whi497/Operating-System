@@ -3,6 +3,13 @@
         "uart.h": "c",
         "vsprintf.h": "c",
         "io.h": "c",
-        "stdarg.h": "c"
+        "stdarg.h": "c",
+        "stdio.h": "c",
+        "types.h": "c",
+        "string.h": "c",
+        "cstdlib": "c",
+        "*.tcc": "c",
+        "system_error": "c",
+        "typeinfo": "c"
     }
 }
