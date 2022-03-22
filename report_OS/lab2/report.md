@@ -11,7 +11,7 @@
 
 
 
-![image](image/badge.png)
+![image](../image/badge.png)
 
 
 
@@ -43,4 +43,3 @@
 
 
 ### 总结与思考
-
