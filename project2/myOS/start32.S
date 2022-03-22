@@ -12,7 +12,6 @@ dead:	jmp dead                # Never here
 
 # Set up the stack
 establish_stack:
-
     # 指定栈底地址（栈是逆向增长的，栈底是高地址），提供两种参考方案
     # 1. 根据 操作系统在内存中的结束地址 和 STACK_SIZE，计算栈底 （下面三行被注释掉的内容）
     # 2. 硬编码，手动填入一个固定的栈底地址 （下面第四行未被注释掉的内容）
@@ -21,7 +20,6 @@ establish_stack:
     # addl    $STACK_SIZE, %eax   # make room for stack
     # andl    $0xffffffe0, %eax   # align
     movl    $0xFFFFFF, %eax     # 填入栈底地址//TODO//done    
-	
     movl    %eax, %esp          # set stack pointer
     movl    %eax, %ebp          # set base pointer
 
@@ -37,7 +35,6 @@ zero_bss:
     xorl    %eax, %eax          # value to clear out memory
     repne                       # while ecx != 0
     stosl                       # clear a long in the bss
-
 
 # Transfer control to main
 to_main:	

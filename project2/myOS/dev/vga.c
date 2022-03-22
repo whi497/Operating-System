@@ -54,7 +54,7 @@ void scroll_screen(void) {
     }
     q-=80;
     for(int i=0; i < VGA_SCREEN_WIDTH; i++){//清空最后一行
-        *q=0x0F000F00;
+        *q=0x0F00;
         q++;
     }
     set_cursor_pos(80*24);
@@ -86,7 +86,7 @@ void clear_screen(void) {
     /* todo//done */
     unsigned short int* p = VGA_BASE;
     for (int i = 0; i < VGA_SCREEN_WIDTH * VGA_SCREEN_HEIGHT; i++){
-        *p=0x0F000F00;//黑底白标
+        *p=0x0F00;//黑底白标
         p++;
     }
     set_cursor_pos(0);

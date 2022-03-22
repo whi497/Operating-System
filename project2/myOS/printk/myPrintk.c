@@ -12,7 +12,7 @@ int myPrintk(int color, const char *format, ...) {
     int cnt = vsprintf(kBuf, format, args);
     va_end(args);
     
-    /* todo */
+    /* todo//done */
     append2screen(kBuf,color);
     uart_put_chars(kBuf);
     return cnt;
@@ -29,7 +29,7 @@ int myPrintf(int color, const char *format, ...) {
     int cnt = vsprintf(uBuf, format, args);
     va_end(args);
 
-    /* todo */
+    /* todo//done */
     append2screen(uBuf,color);
     uart_put_chars(uBuf);
     
