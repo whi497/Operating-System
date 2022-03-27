@@ -66,7 +66,7 @@ void put_char2pos(unsigned char c, int color, unsigned short int pos) {
     /* todo//done */
     unsigned short int* p=pos*2+VGA_BASE;
     unsigned short int data=0;
-    if(c=='\n'|c=='\r') {
+    if(c=='\n') {
         if(pos/80==24) scroll_screen();//光标在最底端换行
         else set_cursor_pos((pos/80+1)*80);//换行
     }
