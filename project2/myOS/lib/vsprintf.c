@@ -1,6 +1,6 @@
 #include "vsprintf.h"
 
-//modified from https://github.com/dueToLife/MY_USTC_OSlab/blob/master/lab2/EXP2.1/linux/kernel/vsprintf.c
+
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
 int strlen(const char * const s)

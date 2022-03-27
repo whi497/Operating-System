@@ -7,8 +7,6 @@
  * 使用封装好的 outb 函数 */
 void uart_put_char(unsigned char ch) {
     /* todo//done*/
-    // if(ch=='\n'|ch=='\r') outb(0x3F8,'\r');
-    // else
      outb(0x3F8,ch);
 }
 
