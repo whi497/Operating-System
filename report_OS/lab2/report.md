@@ -24,9 +24,10 @@
 <p>实验题目：multibootheader2mymain </p>
 <p>学生姓名：叶子昂</p>
 <p>学生学号：PB20020586</p>
-<p>完成时间：2021年11月4日</p>
+<p>完成时间：2022年3月26日</p>
 </div>
 </div>
+
 
 
 <div style="page-break-after:always"></div>
@@ -57,6 +58,8 @@ myos运行在在qemu构建的虚拟硬件环境，myos通过ostart调用用户�
 #### 2.系统启动流程
 
 在qemu构建的虚拟环境中通过multibootheader启动，在start32.S中进行栈的构建和运行环境的初始化，然后系统由osStart.c接管系统开始运行，通过“调用”mymain来运行用户程序。
+
+<img src="D:\wh030917\Documents\1624745389\FileRecv\MobileFile\IMG_0191(20220326-142308).PNG" alt="IMG_0191(20220326-142308)" style="zoom:40%;" />
 
 #### 3.主功能模块及代码实现
 
@@ -289,3 +292,5 @@ myos运行在在qemu构建的虚拟硬件环境，myos通过ostart调用用户�
 
 ### 总结与思考
 
+* 通过本次实验，我进一步熟悉了OS的启动方式和流程，能够再已有的代码框架下，理解代码并补全确实功能。
+* 了解了如何通过嵌入式汇编沟通软硬件，将硬件输出封装成易用的函数供OS和用户程序使用。

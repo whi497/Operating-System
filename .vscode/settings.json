@@ -10,6 +10,7 @@
         "cstdlib": "c",
         "*.tcc": "c",
         "system_error": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "vga.h": "c"
     }
 }
