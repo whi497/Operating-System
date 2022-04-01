@@ -1,11 +1,7 @@
 #include "vga.h"
 #include "myPrintk.h"
-<<<<<<< HEAD
-// extern int start;
-=======
 // extern int start;//check the address
 // extern int _en;
->>>>>>> ced0dba753d760485414fc667d2741365f297937
 // extern int _bss_start;
 // extern int __bss_end;
 // extern int _end;
@@ -17,22 +13,13 @@ void myMain(void);
 void osStart(void) {
     clear_screen();
     myPrintk(0x2, "Starting the OS...\n");
-<<<<<<< HEAD
-    // int address[4] = {0};
-    // address[0] = &start;
-    // address[1] = &_bss_start;
-    // address[2] = &__bss_end;
-    // address[3] = &_end;
-    // for(int i=0;i<4;i++) {
-=======
-    int address[5] = {0};
+    // int address[5] = {0};
     // address[0] = &start;//check the address
     // address[1] = &_en;
     // address[2] = &_bss_start;
     // address[3] = &__bss_end;
     // address[4] = &_end;
     // for(int i=0;i<5;i++) {
->>>>>>> ced0dba753d760485414fc667d2741365f297937
     //     address[i]-=1048576;
     //     myPrintk(0x2, "%d\n",address[i]);
     // }
