@@ -63,10 +63,22 @@ shut_down:
 
 	.p2align 4
 time_interrupt:
-//todo
+# todo//done
+	cld
+	pushf
+	pusha
+	call tick
+	popa
+	popf
+	iret
+
 ignore_int1:
-//todo
-	
+# todo//done
+	cld
+	pusha
+	call function # todo
+	popa
+	iret
 
 # ret /* if do not set timer*/
 setup_time_int_32:
