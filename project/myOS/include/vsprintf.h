@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 
-int mySprintf(char* dst, const char* format, va_list args);
+int vsprintf(char *buf, const char *fmt, va_list args);
+int strlen(const char * const s);
 
 #endif

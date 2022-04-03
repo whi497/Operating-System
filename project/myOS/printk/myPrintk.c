@@ -9,7 +9,7 @@ int myPrintk(int color, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    int count = mySprintf(kBuf, format, args);
+    int count = vsprintf(kBuf, format, args);
     va_end(args);
     append2screen(kBuf, color);
     uart_put_chars(kBuf);
@@ -21,7 +21,7 @@ int myPrintf(int color, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    int count = mySprintf(uBuf, format, args);
+    int count = vsprintf(uBuf, format, args);
     va_end(args);
     append2screen(uBuf, color);
     uart_put_chars(uBuf);

@@ -12,8 +12,8 @@ void osStart(void)
 	init8253();
 	tick();
 	enable_interrupt();
-	
     clear_screen();
+    
     myPrintk(0x2, "START RUNNING......\n");
     startShell();
     myPrintk(0x2, "STOP RUNNING......ShutDown\n");

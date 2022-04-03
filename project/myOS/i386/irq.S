@@ -3,8 +3,12 @@
 _start:
 	.globl enable_interrupt
 enable_interrupt:
-//todo
+# todo//done
+	sti
+	ret
 	
 	.globl disable_interrupt
 disable_interrupt:
-//todo
+# todo//done
+	cli
+	ret

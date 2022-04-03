@@ -76,7 +76,7 @@ ignore_int1:
 # todo//done
 	cld
 	pusha
-	call function # todo
+	call ignoreIntBody
 	popa
 	iret
 

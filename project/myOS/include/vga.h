@@ -9,6 +9,7 @@
 void update_cursor(void);
 void clear_screen(void);
 void scroll_screen(void);
+void put_char2pos(unsigned char c, int color, unsigned short int pos);
 void append_char_to_screen(char c, int color);
 void append2screen(char* str, int color);
 
