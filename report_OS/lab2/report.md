@@ -62,6 +62,13 @@ myos运行在在qemu构建的虚拟硬件环境，myos通过ostart调用用户�
 <img src="D:\wh030917\Documents\1624745389\FileRecv\MobileFile\IMG_0191(20220326-142308).PNG" alt="IMG_0191(20220326-142308)" style="zoom:40%;" />
 
 #### 3.主功能模块及代码实现
+* 系统栈的构建
+  设置栈底为0xFFFFFF，栈大小为0x4000
+  ```assembly
+    movl    $0xFFFFFF, %eax     # 填入栈底地址//TODO//done    
+    movl    %eax, %esp          # set stack pointer
+    movl    %eax, %ebp          # set base pointer
+  ```
 
 * 嵌入式汇编完成单字符和字符串的串口输出(调用接口向端口输出数据即可)
 
@@ -224,7 +231,7 @@ myos运行在在qemu构建的虚拟硬件环境，myos通过ostart调用用户�
 
 * 目录组织结构
 
-​	<img src="C:\Users\wh030917\AppData\Roaming\Typora\typora-user-images\image-20220326111830986.png" alt="image-20220326111830986" style="zoom:50%;" />
+​	<img src="C:\Users\wh030917\AppData\Roaming\Typora\typora-user-images\image-20220328100749661.png" alt="image-20220328100749661" style="zoom: 38%;" />
 
 * makefile组织结构
 

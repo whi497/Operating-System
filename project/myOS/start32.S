@@ -63,11 +63,9 @@ shut_down:
 
 	.p2align 4
 time_interrupt:
-//你需要填写它
-	
-	.p2align 4
+//todo
 ignore_int1:
-//你需要填写它
+//todo
 	
 
 # ret /* if do not set timer*/
