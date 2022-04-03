@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "i8253.h": "c",
+        "i8259a.h": "c",
+        "wallclock.h": "c"
+    }
+}
