@@ -75,9 +75,11 @@ time_interrupt:
 ignore_int1:
 # todo//done
 	cld
+	pushf
 	pusha
 	call ignoreIntBody
 	popa
+	popf
 	iret
 
 # ret /* if do not set timer*/

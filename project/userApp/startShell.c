@@ -27,7 +27,6 @@ myCommand cmd={"cmd\0","List all command\n\0",func_cmd};
 int func_help(int argc, char (*argv)[8]){
     if(argc == 1) {
         myPrintf(0x02,help.help_content);
-        myPrintf(0x02,cmd.help_content);
     }
     else{
         for (int i = 1; i < argc; i++)//help all command after the help
@@ -38,7 +37,7 @@ int func_help(int argc, char (*argv)[8]){
         
     }
 }
-myCommand help={"help\0","Usage: help [command]\n\0Display info about [command]\n\0",func_help};
+myCommand help={"help\0","Usage: help [command]\nDisplay info about [command]\n\0",func_help};
 
 
 /***********************************************************************************/
@@ -56,7 +55,8 @@ int BUF_len=0;	//输入缓存区的长度
 
     do{
         BUF_len=0; 
-        myPrintk(0x07,"Student>>\0");
+        myPrintf(0x12,"PB20020586");
+        myPrintf(0x07,">>");
         while((BUF[BUF_len]=uart_get_char())!='\r'){
             uart_put_char(BUF[BUF_len]);//将串口输入的数存入BUF数组中
             BUF_len++;  //BUF数组的长度加
