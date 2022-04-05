@@ -31,8 +31,8 @@ int func_help(int argc, char (*argv)[8]){
     else{
         for (int i = 1; i < argc; i++)//help all command after the help
         {
-            if(strcmp(argv[i],'help')) myPrintf(0x02,help.help_content);
-            else if(strcmp(argv[i],'cmd')) myPrintf(0x02,cmd.help_content);
+            if(strcmp(argv[i],"help")) myPrintf(0x02,help.help_content);
+            else if(strcmp(argv[i],"cmd")) myPrintf(0x02,cmd.help_content);
         }
         
     }
@@ -42,7 +42,7 @@ myCommand help={"help\0","Usage: help [command]\n\0Display info about [command]\
 
 /***********************************************************************************/
 
-void cmd_get(const char* cmd_string, int cmd_len, int* argc, char* argv[]);//get command parameters from command string
+void cmd_get(const char* cmd_string, int cmd_len, int* argc, char (*argv) [8]);//get command parameters from command string
 int strcmp(char* str1,char* str2);
 
 void startShell(void){
@@ -52,7 +52,6 @@ int BUF_len=0;	//输入缓存区的长度
     
 	int argc;
     char argv[8][8];
-
 
     do{
         BUF_len=0; 
@@ -65,7 +64,8 @@ int BUF_len=0;	//输入缓存区的长度
         uart_put_chars(" -pseudo_terminal\0");
         uart_put_char('\n');
         append2screen(BUF,0x07);
-        append2screen('\n',0x07);
+        append2screen("\n",0x07);
+        // put_char2pos('\n',0x07,get_cursor_pos());
         //OK,助教已经帮助你们实现了“从串口中读取数据存储到BUF数组中”的任务，接下来你们要做
         //的就是对BUF数组中存储的数据进行处理(也即，从BUF数组中提取相应的argc和argv参
         //数)，再根据argc和argv，寻找相应的myCommand ***实例，进行***.func(argc,argv)函数
@@ -74,7 +74,7 @@ int BUF_len=0;	//输入缓存区的长度
         //比如BUF中的内容为 “help cmd”
         //那么此时的argc为2 argv[0]为help argv[1]为cmd
         //接下来就是 help.func(argc, argv)进行函数调用即可
-        cmd_get(BUF,BUF_len,argc,argv);
+        cmd_get(BUF,BUF_len,&argc,argv);
         if(strcmp(argv[0],"help")) {
             help.func(argc,argv);
         }
@@ -87,14 +87,17 @@ int BUF_len=0;	//输入缓存区的长度
 
 }
 
-void cmd_get(const char* cmd_string, int cmd_len, int* argc, char* argv[]){
+void cmd_get(const char* cmd_string, int cmd_len, int* argc, char (*argv)[8]){
     int index = 0;
+    *argc = 0;
     for(int i = 0; i<cmd_len; i++) {
         if(cmd_string[i]>=33 && cmd_string[i]<=126) {//非控制字符
             (*argc)++;
-            for(int j = i;j<cmd_len && cmd_string[j]>=33 && cmd_string[j]<=126 ; j++) {//get a string
+            int j;
+            for(j = i;j<cmd_len && cmd_string[j]>=33 && cmd_string[j]<=126 ; j++) {//get a string
                 argv[*argc-1][index++] = cmd_string[j];
             }
+            i = j;
             argv[*argc-1][index] = '\0';
             index = 0;
         }
