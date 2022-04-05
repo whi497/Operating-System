@@ -4,7 +4,6 @@
 #include "i8259A.h"
 #include "tick.h"
 void myMain(void);
-void startShell(void);
 
 void osStart(void)
 {
@@ -15,7 +14,7 @@ void osStart(void)
     clear_screen();
     
     myPrintk(0x2, "START RUNNING......\n");
-    startShell();
+    myMain();
     myPrintk(0x2, "STOP RUNNING......ShutDown\n");
     while (1);
 }

@@ -48,7 +48,7 @@ void scroll_screen(void) {
     /* todo//done */
     unsigned short int* p = VGA_BASE;
     unsigned short int* q = VGA_BASE+2*VGA_SCREEN_WIDTH;
-    for (int i = 0; i < (VGA_SCREEN_WIDTH)*(VGA_SCREEN_HEIGHT-1); i++) {
+    for (int i = 0; i < (VGA_SCREEN_WIDTH)*(VGA_SCREEN_HEIGHT-1)-8; i++) {
         *p=*q;
         p++;q++;
     }

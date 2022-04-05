@@ -17,9 +17,10 @@ extern myCommand cmd;//ahead declration
 extern myCommand help;
 
 int func_cmd(int argc, char (*argv)[8]){
-	if(argc != 1) myPrintf(14,"notice: cmd needs no args");
-    myPrintf(0x07,cmd.name+' ');
-    myPrintf(0x07,help.name+' ');
+	if(argc != 1) myPrintf(14,"notice: cmd needs no args\n");
+    myPrintf(0x07,cmd.name);myPrintf(0x07," ");
+    myPrintf(0x07,help.name);
+    myPrintf(0x07,"\n");
 } 
 myCommand cmd={"cmd\0","List all command\n\0",func_cmd};
 
@@ -81,7 +82,7 @@ int BUF_len=0;	//输入缓存区的长度
         else if(strcmp(argv[0],"cmd")) {
             cmd.func(argc,argv);
         }
-        else myPrintf(12,"command undeclared!\n");
+        else myPrintf(12,"undeclared command\n");
 
     }while(1);
 
