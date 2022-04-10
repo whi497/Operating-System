@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.S": "asm-intel-x86-generic",
         "uart.h": "c",
         "vsprintf.h": "c",
         "io.h": "c",
@@ -11,6 +12,7 @@
         "*.tcc": "c",
         "system_error": "c",
         "typeinfo": "c",
-        "vga.h": "c"
+        "vga.h": "c",
+        "wallclock.h": "c"
     }
 }

@@ -9,11 +9,11 @@ void osStart(void)
 {
 	init8259A();
 	init8253();
-	tick();
 	enable_interrupt();
     clear_screen();
-    
+
     myPrintk(0x2, "START RUNNING......\n");
+    tick();
     myMain();
     myPrintk(0x2, "STOP RUNNING......ShutDown\n");
     while (1);

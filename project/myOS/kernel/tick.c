@@ -10,7 +10,7 @@ void tick(void){
 	SS = ((10*system_ticks)/1000)%60;
 	MM = (((10*system_ticks)/1000)/60)%60;
 	HH = ((((10*system_ticks)/1000)/60)/60)%24;
-	setWallClock(HH,MM,SS);
+	oneTickUpdateWallClock(HH, MM, SS);
 	return;
 }
 
