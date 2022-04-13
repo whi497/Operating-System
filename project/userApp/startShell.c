@@ -38,7 +38,10 @@ myCommand time={"time\0","show the current time\n",func_time};
 int func_help(int argc, char (*argv)[8]){
     if(argc == 1) {
         myPrintf(0x02,help.help_content);
+<<<<<<< HEAD
         // myPrintf(0x02,cmd.help_content);
+=======
+>>>>>>> e0891c2f15b59358978bf866dd91f33be68b871b
     }
     else{
         for (int i = 1; i < argc; i++)//help all command after the help
@@ -70,7 +73,12 @@ int BUF_len=0;	//输入缓存区的长度
     myPrintf(0x07,"Welcome to myOS! time now is %02d:%02d:%02d\n",h,m,s);
     do{
         BUF_len=0; 
+<<<<<<< HEAD
         myPrintf(0x07,"PB20020586>>\0");
+=======
+        myPrintf(0x12,"PB20020586");
+        myPrintf(0x07,">>");
+>>>>>>> e0891c2f15b59358978bf866dd91f33be68b871b
         while((BUF[BUF_len]=uart_get_char())!='\r'){
             uart_put_char(BUF[BUF_len]);//将串口输入的数存入BUF数组中
             BUF_len++;  //BUF数组的长度加
