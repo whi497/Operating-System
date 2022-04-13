@@ -6,7 +6,7 @@
 #include "i8259A.h"
 #include "tick.h"
 #include "wallClock.h"
-//todo
+//todo//done
 typedef struct myCommand {
     char name[80];
     char help_content[200];
@@ -14,15 +14,26 @@ typedef struct myCommand {
 }myCommand; 
 
 extern myCommand cmd;//ahead declration
+extern myCommand time;
 extern myCommand help;
 
 int func_cmd(int argc, char (*argv)[8]){
 	if(argc != 1) myPrintf(14,"notice: cmd needs no args\n");
     myPrintf(0x07,cmd.name);myPrintf(0x07," ");
+    myPrintf(0x07,time.name);myPrintf(0x07," ");
     myPrintf(0x07,help.name);
     myPrintf(0x07,"\n");
 } 
 myCommand cmd={"cmd\0","List all command\n\0",func_cmd};
+
+int func_time(int argc, char (*argv)[8]){
+    if(argc != 1) myPrintf(14,"notices: time needs no args\n");
+    int h,m,s;
+    h=0;m=0;s=0;
+    getWallClock(&h,&m,&s);
+    myPrintf(0x07,"%02d:%02d:%02d\n",h,m,s);
+}
+myCommand time={"time\0","show the current time\n",func_time};
 
 int func_help(int argc, char (*argv)[8]){
     if(argc == 1) {
@@ -34,6 +45,7 @@ int func_help(int argc, char (*argv)[8]){
         {
             if(strcmp(argv[i],"help")) myPrintf(0x02,help.help_content);
             else if(strcmp(argv[i],"cmd")) myPrintf(0x02,cmd.help_content);
+            else if(strcmp(argv[i],"time")) myPrintf(0x02,time.help_content);
         }
         
     }
@@ -55,10 +67,10 @@ int BUF_len=0;	//输入缓存区的长度
     char argv[8][8];
     int h,m,s = 0;
     getWallClock(&h,&m,&s);
-    myPrintf(0x07,"%d:%d:%d\n",h,m,s);
+    myPrintf(0x07,"Welcome to myOS! time now is %02d:%02d:%02d\n",h,m,s);
     do{
         BUF_len=0; 
-        myPrintf(0x07,"Student>>\0");
+        myPrintf(0x07,"PB20020586>>\0");
         while((BUF[BUF_len]=uart_get_char())!='\r'){
             uart_put_char(BUF[BUF_len]);//将串口输入的数存入BUF数组中
             BUF_len++;  //BUF数组的长度加
@@ -68,8 +80,6 @@ int BUF_len=0;	//输入缓存区的长度
         uart_put_char('\n');
         append2screen(BUF,0x07);
         append2screen("\n",0x07);
-        getWallClock(&h,&m,&s);
-        myPrintf(0x07,"%d:%d:%d\n",h,m,s);
         // put_char2pos('\n',0x07,get_cursor_pos());
         //OK,助教已经帮助你们实现了“从串口中读取数据存储到BUF数组中”的任务，接下来你们要做
         //的就是对BUF数组中存储的数据进行处理(也即，从BUF数组中提取相应的argc和argv参
@@ -85,6 +95,9 @@ int BUF_len=0;	//输入缓存区的长度
         }
         else if(strcmp(argv[0],"cmd")) {
             cmd.func(argc,argv);
+        }
+        else if(strcmp(argv[0],"time")) {
+            time.func(argc,argv);
         }
         else myPrintf(12,"undeclared command\n");
 

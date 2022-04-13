@@ -48,7 +48,7 @@ void scroll_screen(void) {
     /* todo//done */
     unsigned short int* p = VGA_BASE;
     unsigned short int* q = VGA_BASE+2*VGA_SCREEN_WIDTH;
-    for (int i = 0; i < (VGA_SCREEN_WIDTH)*(VGA_SCREEN_HEIGHT-1)-8; i++) {
+    for (int i = 0; i < (VGA_SCREEN_WIDTH)*(VGA_SCREEN_HEIGHT-2); i++) {
         *p=*q;
         p++;q++;
     }
@@ -57,7 +57,7 @@ void scroll_screen(void) {
         *q=0x0F00;
         q++;
     }
-    set_cursor_pos(80*24);
+    set_cursor_pos(80*23);
 }
 
 /* 向 vga 的特定光标位置 pos 输出一个字符
@@ -67,7 +67,7 @@ void put_char2pos(unsigned char c, int color, unsigned short int pos) {
     unsigned short int* p=pos*2+VGA_BASE;
     unsigned short int data=0;
     if(c=='\n') {
-        if(pos/80==24) scroll_screen();//光标在最底端换行
+        if(pos/80==23) scroll_screen();//光标在最底端换行
         else set_cursor_pos((pos/80+1)*80);//换行
     }
     else{
@@ -99,7 +99,7 @@ void append2screen(char *str, int color) { //换行和滚屏由put_char2pos()内
         int pos = get_cursor_pos();
         put_char2pos(str[i],color,pos);
         if(str[i] != '\n'){
-            if(pos==80*25-1) scroll_screen();//已写入最后一个位置
+            if(pos==80*24-1) scroll_screen();//已写入最后一个位置
             else set_cursor_pos(pos+1);
         }
     }
