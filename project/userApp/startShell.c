@@ -38,10 +38,6 @@ myCommand time={"time\0","show the current time\n",func_time};
 int func_help(int argc, char (*argv)[8]){
     if(argc == 1) {
         myPrintf(0x02,help.help_content);
-<<<<<<< HEAD
-        // myPrintf(0x02,cmd.help_content);
-=======
->>>>>>> e0891c2f15b59358978bf866dd91f33be68b871b
     }
     else{
         for (int i = 1; i < argc; i++)//help all command after the help
