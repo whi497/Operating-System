@@ -80,15 +80,6 @@ int BUF_len=0;	//输入缓存区的长度
         uart_put_char('\n');
         append2screen(BUF,0x07);
         append2screen("\n",0x07);
-        // put_char2pos('\n',0x07,get_cursor_pos());
-        //OK,助教已经帮助你们实现了“从串口中读取数据存储到BUF数组中”的任务，接下来你们要做
-        //的就是对BUF数组中存储的数据进行处理(也即，从BUF数组中提取相应的argc和argv参
-        //数)，再根据argc和argv，寻找相应的myCommand ***实例，进行***.func(argc,argv)函数
-        //调用。
-
-        //比如BUF中的内容为 “help cmd”
-        //那么此时的argc为2 argv[0]为help argv[1]为cmd
-        //接下来就是 help.func(argc, argv)进行函数调用即可
         cmd_get(BUF,BUF_len,&argc,argv);
         if(strcmp(argv[0],"help")) {
             help.func(argc,argv);

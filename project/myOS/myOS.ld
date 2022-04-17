@@ -12,6 +12,7 @@ SECTIONS {
 	}
 	
 	. = ALIGN(16);
+	_en = .;
 	.data		: { *(.data*) }
 	
 	. = ALIGN(16);
