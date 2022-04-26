@@ -1,29 +1,43 @@
-#include "uart.h"
-#include "vga.h"
-#include "vsprintf.h"
-#include <stdarg.h>
+#define KERNEL  //needed by vsprintf.c
+#include "types.h" //needed by vsprintf.c
+#include "vsprintf.c"
 
+#include "../include/uart.h"
+#include "../include/vga.h"
 
-char kBuf[400];
-int myPrintk(int color, const char* format, ...)
-{
+//extern void getTimeStamp(unsigned char *buffer);
+//char timestamp[20];
+
+char buf[400];  //TODO: fix me
+int myPrintk(int color,const char *format, ...){
     va_list args;
+    int n;
+
+    //getTimeStamp(timestamp);
+    //append2screen(timestamp,color);
+    //uart_put_chars(timestamp);
+
     va_start(args, format);
-    int count = vsprintf(kBuf, format, args);
-    va_end(args);
-    append2screen(kBuf, color);
-    uart_put_chars(kBuf);
-    return count;
+    n = vsprintf(buf, format, args);
+    //if (n>400) while(1);
+    append2screen(buf,color);
+    uart_put_chars(buf); 
+    va_end(args);  
+
+    return n; 
 }
 
-char uBuf[400];
-int myPrintf(int color, const char* format, ...)
-{
+char user_buf[400];  //TODO: fix me
+int myPrintf(int color,const char *format, ...){
     va_list args;
+    int n;
+
     va_start(args, format);
-    int count = vsprintf(uBuf, format, args);
-    va_end(args);
-    append2screen(uBuf, color);
-    uart_put_chars(uBuf);
-    return count;
+    n = vsprintf(user_buf, format, args);
+    //if (n>400) while(1);
+    append2screen(user_buf,color);
+    uart_put_chars(user_buf); 
+    va_end(args);  
+
+    return n; 
 }

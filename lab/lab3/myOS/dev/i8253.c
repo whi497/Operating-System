@@ -1,0 +1,8 @@
+#include "io.h"
+
+void init8253(void){
+	//todo//done
+	outb(0x43,0x34);
+	outb(0x40,0x9B);
+	outb(0x40,0x2E);
+}

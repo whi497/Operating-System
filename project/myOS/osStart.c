@@ -1,34 +1,41 @@
-#include "myPrintk.h"
-#include "vga.h"
-#include "i8253.h"
-#include "i8259A.h"
-#include "tick.h"
-void myMain(void);
-// extern int start;//check the address
-// extern int _en;
-// extern int _bss_start;
-// extern int _end;
+#include "include/i8253.h"
+#include "include/i8259.h"
+#include "include/irq.h"
+#include "include/uart.h"
+#include "include/vga.h"
+#include "include/mem.h"
+#include "include/myPrintk.h"
 
-void osStart(void)
-{
+extern void myMain(void);		//TODO: to be generalized
+
+void pressAnyKeyToStart(void){
+	myPrintk(0x5,"Prepare uart device\n");
+	myPrintk(0x5,"Then, press any key to start ...\n");
+
+	uart_get_char();
+}
+
+void osStart(void){
+	pressAnyKeyToStart(); // prepare for uart device
 	init8259A();
 	init8253();
 	enable_interrupt();
-    tick();
-    clear_screen();
-    
-    myPrintk(0x2, "START RUNNING......\n");
-    // int address[4] = {0};
-    // address[0] = &start;//check the address
-    // address[1] = &_en;
-    // address[2] = &_bss_start;
-    // address[3] = &_end;
-    // for(int i=0;i<4;i++) {
-    //     address[i]-=1048576;
-    //     myPrintk(0x2, "%d\n",address[i]);
-    // }
-    // while(1);
-    myMain();
-    myPrintk(0x2, "STOP RUNNING......ShutDown\n");
-    while (1);
+
+	clear_screen();
+
+	pMemInit();  //after this, we can use kmalloc/kfree and malloc/free
+
+	{
+		unsigned long tmp = dPartitionAlloc(pMemHandler,100);
+		dPartitionWalkByAddr(pMemHandler);
+		dPartitionFree(pMemHandler,tmp);
+		dPartitionWalkByAddr(pMemHandler);
+	}
+
+	// finished kernel init
+	// NOW, run userApp
+	myPrintk(0x2,"START RUNNING......\n");	
+	myMain();
+	myPrintk(0x2, "STOP RUNNING......ShutDown\n");
+	while(1);
 }

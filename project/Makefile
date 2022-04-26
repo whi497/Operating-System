@@ -1,10 +1,9 @@
+#SRC_RT=/home/xlanchen/workspace/OS_EX/multiboot_serials/3_shell_interrupt_timer/
 SRC_RT=$(shell pwd)
 
-# CROSS_COMPILE=i686-elf-
 CROSS_COMPILE=
 ASM_FLAGS= -m32 --pipe -Wall -fasm -g -O1 -fno-stack-protector	
-C_FLAGS =  -m32 -fno-stack-protector -g
-INCLUDE_PATH = myOS/include
+C_FLAGS =  -m32 -fno-stack-protector -fno-builtin-free -g
 
 .PHONY: all
 all: output/myOS.elf
@@ -24,7 +23,7 @@ output/%.o : %.S
 
 output/%.o : %.c
 	@mkdir -p $(dir $@)
-	@${CROSS_COMPILE}gcc ${C_FLAGS} -I${INCLUDE_PATH} -c -o $@ $<
+	@${CROSS_COMPILE}gcc ${C_FLAGS} -c -o $@ $<
 
 clean:
 	rm -rf output

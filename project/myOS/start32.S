@@ -1,10 +1,12 @@
 STACK_SIZE =	0x1000	# Size of heap and stack. 4KB
+WHITE	= 0x7			# 白色，用于输出字符，为字符颜色
 
 /* ===== code32 =========================== */
 
+.text
 	.globl 	_start		# GNU default entry point
 	.globl 	osStart
-.text
+	.globl 	ignoreIntBody
 .code32
 _start:
 	jmp establish_stack
@@ -13,9 +15,9 @@ dead:	jmp dead			# Never here
 
 # Set up the stack
 establish_stack:
-	; movl	_end, %eax		# eax = end of bss/start of heap #填入正确的内容
-	; addl	$STACK_SIZE, %eax	# make room for stack
-	; andl	$0xffffffc0, %eax	# align it on 16 byte boundary
+	#movl	$_end, %eax		# eax = end of bss/start of heap
+	#addl	$STACK_SIZE, %eax	# make room for stack
+	#andl	$0xffffffc0, %eax	# align it on 16 byte boundary
 	movl	$0x80000, %eax	
 	
 	movl	%eax, %esp		# set stack pointer
@@ -34,76 +36,76 @@ zero_bss:
 	repne			            	# while ecx != 0
 	stosl				            # clear a long in the bss
 
-	
-setup_idt:
-	movl $ignore_int1,%edx
-	movl $0x00080000,%eax
-	movw %dx,%ax /* selector = 0x0010 = cs */
-	movw $0x8E00,%dx /* interrupt gate - dpl=0, present */
-	movl $IDT,%edi
-	mov $256,%ecx
-	
-rp_sidt:
-	movl %eax,(%edi)
-	movl %edx,4(%edi)
-	addl $8,%edi
-	dec %ecx
-	jne rp_sidt
-	
+setup_idtptr:
+	call setup_idt
 	lidt idtptr
-	
-	call setup_time_int_32
-	
+
 # Transfer control to main
-to_main:	
+to_osStart:	
 	call	osStart
 
 shut_down:	
 	jmp	shut_down	# Never here	
 
 	.p2align 4
-time_interrupt:
-# todo//done
+time_interrupt:	
 	cld
 	pushf
-	pusha
+  	pusha
 	call tick
 	popa
 	popf
 	iret
 
+	.p2align 4
 ignore_int1:
-# todo//done
 	cld
 	pusha
-	call ignoreIntBody
+	call	ignoreIntBody
 	popa
 	iret
+	
+setup_idt:
+	movl $ignore_int1,%edx
+	movl $0x00080000,%eax
+	movw %dx,%ax		/* selector = 0x0010 = cs */
+	movw $0x8E00,%dx	/* interrupt gate - dpl=0, present */
 
-# ret /* if do not set timer*/
-setup_time_int_32:
+	movl $IDT,%edi
+	mov $256,%ecx
+rp_sidt:
+	movl %eax,(%edi)
+	movl %edx,4(%edi)
+	addl $8,%edi
+	dec %ecx
+	jne rp_sidt
+
+    # ret  /* if do not set timer*/
+
+setup_time_int_32:	
 	movl $time_interrupt,%edx
-	movl $0x00080000,%eax /* selector：0x0010 = cs */
-	movw %dx,%ax
-	movw $0x8E00,%dx /* interrupt gate - dpl=0, present */
+	movl $0x00080000,%eax
+	movw %dx,%ax		/* selector = 0x0010 = cs */
+	movw $0x8E00,%dx	/* interrupt gate - dpl=0, present */
+
 	movl $IDT,%edi
 	addl $(32*8), %edi
 	movl %eax,(%edi)
 	movl %edx,4(%edi)
-	ret
 
+	ret
 
 /* ===== data =========================== */
 .data
+
 # IDT
 	.p2align 4
 	.globl IDT
 IDT:
-
 	.rept 256
 	.word 0,0,0,0
 	.endr
-idtptr:
 
-	.word (256*8 - 1)
-	.long IDT
+idtptr:
+	.word  (256*8 - 1)
+	.long  IDT

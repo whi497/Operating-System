@@ -1,7 +1,8 @@
 #ifndef __WALLCLOCK_H__
 #define __WALLCLOCK_H__
 
-void setWallClock(int HH,int MM,int SS);
-void getWallClock(int *HH,int *MM,int *SS);
+void getWallClock(int *h, int *m, int *s);
+void setWallClock(int h, int m, int s);
+void setWallClockHook(void (*func)(void));
 
 #endif

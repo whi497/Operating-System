@@ -1,17 +1,29 @@
-#include "io.h"
-#include "myPrintk.h"
-#include "uart.h"
-#include "vga.h"
+#include "../myOS/userInterface.h"   //interface from kernel
 
-#include "wallClock.h"
+#include "shell.h"
+#include "memTestCase.h"
 
-void startShell(void);
+void wallClock_hook_main(void){
+	int _h, _m, _s;
+	char hhmmss[]="hh:mm:ss\0\0\0\0";
 
-//void mySetWallClock(int HH, int MM, intSS) //允许用户在userApp中重新定义SetWallClock
+	getWallClock(&_h,&_m,&_s);
+	sprintf(hhmmss,"%02d:%02d:%02d",_h,_m,_s);
+	put_chars(hhmmss,0x7E,24,72);
+}
+
+void doSomeTestBefore(void){		
+	setWallClock(18,59,59);		//set time 18:59:59
+    	setWallClockHook(&wallClock_hook_main);
+}
 
 void myMain(void){    
-    setWallClockHook(setWallClock); //可以在userApp中自定义新的mysetWallClock （机制与策略相分离）
-    tick();                           //并将setWallClockHook中的参数从setWallClock默认的内核策略修改成mySetWallClock用户定义的新策略;
+    clear_screen();
+
+    doSomeTestBefore();
+
+	initShell();
+    memTestCaseInit();
     startShell();
     return;
 }

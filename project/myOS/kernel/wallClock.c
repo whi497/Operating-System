@@ -1,35 +1,38 @@
-#include "vga.h"
-#include "vsprintf.h"
-#include <stdarg.h>
-char Buf[400];
+#include "../include/vsprintf.h"
 
-void (*wallClock_hook)(int, int, int) = 0;
+int hh=0,mm=0,ss=0,ms=0;
 
-void oneTickUpdateWallClock(int HH, int MM, int SS){//调用 wallClock_hook 函数
-	if(wallClock_hook) wallClock_hook(HH,MM,SS);
-} 
+void setWallClock(int h, int m, int s){
+        if ( (h<0) || (h>24) ) hh=0;
+        else hh = h;
+        if ( (m<0) || (h>60) ) mm=0;
+        else mm = m;
+        if ( (s<0) || (s>60) ) ss=0;
+        else ss = s;
+}
 
-void setWallClockHook(void (*func)(int, int, int)) {//设置 wallClock_hook 的值
+void getWallClock(int *h, int *m, int *s){
+        *h = hh;
+        *m = mm;
+        *s = ss;
+}
+
+void (*wallClock_hook)(void) = 0;
+void setWallClockHook(void (*func)(void)) {
 	wallClock_hook = func;
 }
 
-void setWallClock(int HH,int MM,int SS){
-	//todo//done
-	int args[3] = { HH, MM, SS };
-	char* format = "%02d:%02d:%02d";
-    vsprintf(Buf, format, args);
-	int len = strlen(Buf);
-	for (int i = 0;Buf[i]!='\0';i++){
-        put_char2pos(Buf[i],0x07,80*25-len+i);
-    }
+void oneTickUpdateWallClock(void){
+	ms += 10;  // ?100HZ?
+        if (ms>=1000) {ms=0;ss++;}
+        if (ss>=60) {ss=0;mm++;}
+        if (mm>=60) {mm=0;hh++;}
+        if (hh>=24) hh=0;
+
+	if (wallClock_hook) wallClock_hook();
 }
 
-void getWallClock(int *HH,int *MM,int *SS){
-	//todo
-	unsigned short int* p = VGA_BASE+(80*25-8)*2;
-	*HH = ((*p & 0x00ff)-48)*10+((*(p+1) & 0x00ff)-48);
-	p+=3;
-	*MM = ((*p & 0x00ff)-48)*10+((*(p+1) & 0x00ff)-48);
-	p+=3;
-	*SS = ((*p & 0x00ff)-48)*10+((*(p+1) & 0x00ff)-48);
+//TODO: buffer的长度：至少10个字节
+void getTimeStamp(unsigned char *buffer){
+        sprintf(buffer,"[%02d:%02d:%02d:%03d]",hh,mm,ss,ms);
 }

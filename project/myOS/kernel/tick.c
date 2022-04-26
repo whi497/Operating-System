@@ -1,16 +1,23 @@
-#include "wallClock.h"
-long int system_ticks;
-int HH,MM,SS;
+extern void oneTickUpdateWallClock(void);       //TODO: to be generalized
 
+//#ifndef __TICK_HOOK__
+//#define __TICK_HOOK__
+void (*tick_hook)(void) = 0; //{};
+//#endif
+
+int tick_number = 0;
 void tick(void){
-	system_ticks++;
-	//todo//done
-	int MS;
-	MS = (10*system_ticks)%1000;
-	SS = ((10*system_ticks)/1000)%60;
-	MM = (((10*system_ticks)/1000)/60)%60;
-	HH = ((((10*system_ticks)/1000)/60)/60)%24;
-	oneTickUpdateWallClock(HH, MM, SS);
-	return;
-}
+	int temp_col, temp_row;	
+	tick_number++;	
+	//myPrintk(0x4,"tick::%d\n",tick_number);
 
+	oneTickUpdateWallClock();
+
+	/* call hooks 
+	scheduler_tick();  // RR
+	tick_hook_arr();  // arriving	
+
+	if(watchdogTimer_func) watchdogTimer_func(); 
+    */
+	if(tick_hook) tick_hook();  //user defined   
+}

@@ -1,106 +1,130 @@
-#include "io.h"
-#include "vga.h"
+//=========================simple output===========================================
+#define VGA_BASE 0xb8000
+#define ROWS 24   // row25 is for system
+#define COLS 80
 
-#define VGA_BASE 0xB8000 // vga 显存起始地址
-#define VGA_SCREEN_WIDTH 80 // vga 屏幕宽度（可容纳字符数）
-#define VGA_SCREEN_HEIGHT 25 // vga 屏幕高度
+// with BRIGHT bit = 0
+#define BLACK   0x0
+#define BLUE    0x1
+#define GREEN   0x2
+#define CYAN    0x3
+#define RED     0x4
+#define MAGENTA 0x5
+#define BROWN   0x6
+#define LGRAY   0x7
 
-#define CURSOR_LINE_REG 0xE // 行号寄存器
-#define CURSOR_COL_REG 0xF // 列号寄存器
-#define CURSOR_INDEX_PORT 0x3D4 // 光标行列索引端口号
-#define CURSOR_DATA_PORT 0x3D5 // 光标数据端口号
+// with BRIGHT bit = 1
+#define BRIGHT  0x8
+#define DGRAY   BRIGHT & BLACK
+#define LBLUE   BRIGHT & BLUE
+#define LGREEN  BRIGHT & GREEN
+#define LCYAN   BRIGHT & CYAN
+#define LRED    BRIGHT & RED
+#define PINK    BRIGHT & MAGENTA
+#define YELLOW  BRIGHT & BROWN
+#define WHITE   BRIGHT & LGRAY
 
-/* ========= 以下函数仅供参考，可以根据自己的需求进行修改，甚至删除 ========= */
+#define BLINK   0x80
 
-/* 将光标设定到特定位置
- * 提示：使用 outb */
-void set_cursor_pos(unsigned short int pos) {
-    /* todo//done */
-    unsigned char line = 0;
-    unsigned char column = 0;
-    line = pos>>8;
-    column = pos;
-    outb(CURSOR_INDEX_PORT,CURSOR_LINE_REG);//写数据
-    outb(CURSOR_DATA_PORT,line);
-    outb(CURSOR_INDEX_PORT,CURSOR_COL_REG);
-    outb(CURSOR_DATA_PORT,column);
+#include "../include/io.h"
+
+static void move_cursor(unsigned int _row, unsigned int _col){
+    unsigned int cursorLocation = _row * 80 + _col;
+
+    outb(0x3D4, 14); // select cursor location high register                   
+    outb(0x3D5, cursorLocation >> 8);   
+    outb(0x3D4, 15); // select cursor location low register                    
+    outb(0x3D5, cursorLocation & 0xff);        
 }
 
-/* 获取光标当前所在位置
- * 提示：使用 inb */ 
-unsigned short int get_cursor_pos(void) {
-    /* todo//done */
-    unsigned char line = 0;
-    unsigned char column = 0;
-    outb(CURSOR_INDEX_PORT,CURSOR_LINE_REG);//读数据
-    line=inb(CURSOR_DATA_PORT);
-    outb(CURSOR_INDEX_PORT,CURSOR_COL_REG);
-    column=inb(CURSOR_DATA_PORT);
-    int pos = 0;
-    pos = (pos | line)<<8;
-    pos = pos | column;
-    return pos; 
+unsigned char * vgaPtr(int _row, int _col){
+    unsigned char * ptr = (unsigned char *)VGA_BASE;
+    return ptr + _row * COLS * 2 + _col *2;
 }
 
-/* 滚屏，vga 屏幕满时使用。丢弃第一行内容，将剩余行整体向上滚动一行
- * 提示：使用指针修改显存 */
-void scroll_screen(void) {
-    /* todo//done */
-    unsigned short int* p = VGA_BASE;
-    unsigned short int* q = VGA_BASE+2*VGA_SCREEN_WIDTH;
-    for (int i = 0; i < (VGA_SCREEN_WIDTH)*(VGA_SCREEN_HEIGHT-2); i++) {
-        *p=*q;
-        p++;q++;
-    }
-    q-=80;
-    for(int i=0; i < VGA_SCREEN_WIDTH; i++){//清空最后一行
-        *q=0x0F00;
-        q++;
-    }
-    set_cursor_pos(80*23);
+void put_char(char c, char color, int _row, int _col) {
+	unsigned char *ptr = vgaPtr(_row,_col);
+
+	*ptr++ = c; 
+    *ptr   = color;	
 }
 
-/* 向 vga 的特定光标位置 pos 输出一个字符
- * 提示：使用指针修改显存 */
-void put_char2pos(unsigned char c, int color, unsigned short int pos) {
-    /* todo//done */
-    unsigned short int* p=pos*2+VGA_BASE;
-    unsigned short int data=0;
-    if(c=='\n') {
-        if(pos/80==23) scroll_screen();//光标在最底端换行
-        else set_cursor_pos((pos/80+1)*80);//换行
-    }
-    else{
-        data = data | (color<<8);
-        data = data | c;
-        *p=data;
-    }
-}
-/* ========= 以下函数接口禁止修改 ========= */
+int put_chars(char *msg, char color, int _row, int _col){
+	char c, *ptr=msg;		
+    int n=0;
+	
+	c = *ptr;
+	while (c!='\0'){
+        n++;
+	    if ( _col==80 ) {	_col = 0;	_row ++;	}
+	    if ( _row==25 ) _row = 0;
 
-/* 清除屏幕上所有字符，并将光标位置重置到顶格
- * 提示：使用指针修改显存 */
-void clear_screen(void) {
-    /* todo//done */
-    unsigned short int* p = VGA_BASE;
-    for (int i = 0; i < VGA_SCREEN_WIDTH * VGA_SCREEN_HEIGHT; i++){
-        *p=0x0F00;//黑底白标
-        p++;
-    }
-    set_cursor_pos(0);
+	    put_char(c, color, _row, _col++);	 
+
+	    c = *(++ptr);  //next char
+	}
+	return n;
 }
 
-/* 向 vga 的当前光标位置输出一个字符串，并移动光标位置到串末尾字符的下一位
- * 如果超出了屏幕范围，则需要滚屏
- * 需要能够处理转义字符 \n */
-void append2screen(char *str, int color) { //换行和滚屏由put_char2pos()内部处理
-    /* todo//done */
-    for (int i = 0;str[i]!='\0';i++){
-        int pos = get_cursor_pos();
-        put_char2pos(str[i],color,pos);
-        if(str[i] != '\n'){
-            if(pos==80*24-1) scroll_screen();//已写入最后一个位置
-            else set_cursor_pos(pos+1);
-        }
+void clear_char(int _row, int _col) {
+	unsigned char *ptr = vgaPtr(_row,_col);
+
+	*ptr++ = 0; 
+    *ptr   = 0x7;	
+}
+
+void clearLastRow(void){
+    int _col;
+    for(_col=0; _col<COLS; _col++) clear_char(ROWS-1, _col);
+}
+
+void scrollOneRow(void){        
+    int i;
+    unsigned char * ptr = (unsigned char *)VGA_BASE;
+    unsigned char * nextRowPtr = vgaPtr(1,0);
+
+    for (i=0; i< (ROWS-1) * COLS; i++) {
+        *ptr++ = *nextRowPtr++;
+        *ptr++ = *nextRowPtr++;
     }
+    clearLastRow();        
+}
+
+void clear_screen(void) {	
+	unsigned char *ptr = (unsigned char *)VGA_BASE;  
+    unsigned int _col,_row;  
+	for(_row=0; _row< ROWS; _row++) {
+	    for (_col=0; _col<COLS; _col++) {
+            (*ptr++) = 0;  //first char
+            (*ptr++) = 0x7;  //second char
+	    }
+	}    
+    move_cursor(0,0);
+    return;
+}
+
+void append2screen(char *str,int color){ 
+    char c, *current =str ; 
+    unsigned int cursorLocation;
+    int row, col;
+    outb(0x3D4, 14); cursorLocation = inb(0x3D5) << 8;
+    outb(0x3D4, 15); cursorLocation |= inb(0x3D5);
+
+    row = cursorLocation / 80;
+    col = cursorLocation % 80;
+
+    while(c = *current++) {
+        if (c !='\n') {
+            put_char(c,color,row,col++);              
+        } else { // for '\n'            
+            col = 0; row ++; 
+        }        
+        // what if col and row too big                
+        if (col >= COLS) { col = 0; row++; }
+        if (row >= ROWS) {            
+            scrollOneRow(); 
+            row = ROWS-1;
+        }        
+    } 
+    move_cursor(row, col); 
 }

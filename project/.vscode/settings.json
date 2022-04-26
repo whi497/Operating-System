@@ -1,15 +1,3 @@
 {
-    "files.associations": {
-        "*.S": "asm-intel-x86-generic",
-        "i8253.h": "c",
-        "i8259a.h": "c",
-        "wallclock.h": "c",
-        "io.h": "c",
-        "vga.h": "c",
-        "cstdio": "c",
-        "*.tcc": "c",
-        "stdarg.h": "c",
-        "vsprintf.h": "c",
-        "typeinfo": "c"
-    }
+    "C_Cpp.errorSquiggles": "Enabled"
 }
