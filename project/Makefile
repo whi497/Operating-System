@@ -12,7 +12,7 @@ MULTI_BOOT_HEADER=output/multibootheader/multibootHeader.o
 include $(SRC_RT)/myOS/Makefile
 include $(SRC_RT)/userApp/Makefile
 
-OS_OBJS       = ${MYOS_OBJS} ${USER_APP_OBJS}
+OS_OBJS = ${MYOS_OBJS} ${USER_APP_OBJS}
 
 output/myOS.elf: ${OS_OBJS} ${MULTI_BOOT_HEADER}
 	${CROSS_COMPILE}ld -n -T myOS/myOS.ld ${MULTI_BOOT_HEADER} ${OS_OBJS} -o output/myOS.elf

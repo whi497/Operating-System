@@ -51,6 +51,7 @@ void addNewCmd(	unsigned char *cmd,
 		int (*func)(int argc, unsigned char **argv), 
 		void (*help_func)(void), 
 		unsigned char* description){
+            //todo
 	//本函数需要实现！！！
     /*功能：增加命令
     1.使用malloc创建一个cm的结构体，新增命令。

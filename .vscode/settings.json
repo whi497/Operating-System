@@ -13,6 +13,8 @@
         "system_error": "c",
         "typeinfo": "c",
         "vga.h": "c",
-        "wallclock.h": "c"
-    }
+        "wallclock.h": "c",
+        "mem.h": "c"
+    },
+    "todo-tree.tree.scanMode": "open files"
 }

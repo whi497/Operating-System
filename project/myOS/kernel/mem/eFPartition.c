@@ -31,6 +31,13 @@ void eFPartitionWalkByAddr(unsigned long efpHandler){
 	2、遍历每一个EEB，打印出他们的地址以及下一个EEB的地址（可以调用上面的函数showEEB）
 
 	*/
+	eFPartition* mem_pointer = (eFPartition*)efpHandler;
+	showeFPartition(efpHandler);
+	EEB* eebPointer = mem_pointer->firstFree;
+	for(int i = 0; i < (mem_pointer->totalN)+1; i++) {
+		showEEB(eebPointer);
+		eebPointer = eebPointer->next_start;
+	}
 
 }
 
@@ -48,12 +55,14 @@ unsigned long eFPartitionTotalSize(unsigned long perSize, unsigned long n){
 	3.最后别忘记加上eFPartition这个数据结构的大小，因为它也占一定的空间。
 
 	*/
-	
+	int finalpersize = (perSize/8)*8+((perSize%8)?8:0);
+	return (finalpersize*n+4*(n+1)+12);
 
 }
 
 unsigned long eFPartitionInit(unsigned long start, unsigned long perSize, unsigned long n){
 	//本函数需要实现！！！
+	//todo
 	/*功能：初始化内存
 	1.需要创建一个eFPartition结构体，需要注意的是结构体的perSize不是直接传入的参数perSize，需要对齐。结构体的next_start也需要考虑一下其本身的大小。
 	2.就是先把首地址start开始的一部分空间作为存储eFPartition类型的空间
@@ -62,14 +71,24 @@ unsigned long eFPartitionInit(unsigned long start, unsigned long perSize, unsign
 	注意的地方：
 		1.EEB类型的数据的存在本身就占用了一定的空间。
 	*/
-	
-
-
+	int finalpersize = (perSize/8)*8+((perSize%8)?8:0);
+	eFPartition Ini_eFPartition;
+	Ini_eFPartition.totalN = n+1;
+	Ini_eFPartition.perSize = finalpersize;
+	Ini_eFPartition.firstFree = start + 12;
+	EEB* epointer = (EEB*)(start+12);
+	for (int i=0; i< n; i++){
+		epointer->next_start = &epointer + 4 + finalpersize;
+		epointer = epointer->next_start;
+	}
+	epointer->next_start = 0;
+	return &Ini_eFPartition;
 }
 
 
 unsigned long eFPartitionAlloc(unsigned long EFPHandler){
 	//本函数需要实现！！！
+	//todo
 	/*功能：分配一个空间
 	1.本函数分配一个空闲块的内存并返回相应的地址，EFPHandler表示整个内存的首地址
 	2.事实上EFPHandler就是我们的句柄，EFPHandler作为eFPartition *类型的数据，其存放了我们需要的firstFree数据信息
@@ -84,6 +103,7 @@ unsigned long eFPartitionAlloc(unsigned long EFPHandler){
 
 unsigned long eFPartitionFree(unsigned long EFPHandler,unsigned long mbStart){
 	//本函数需要实现！！！
+	//todo
 	/*功能：释放一个空间
 	1.mbstart将成为第一个空闲块，EFPHandler的firstFree属性也需要相应大的更新。
 	2.同时我们也需要更新维护空闲内存块组成的链表。

@@ -81,6 +81,7 @@ unsigned long dPartitionAllocFirstFit(unsigned long dp, unsigned long size){
  */
 unsigned long dPartitionFreeFirstFit(unsigned long dp, unsigned long start){
 	//本函数需要实现！！！
+	//todo
 	/*功能：释放一个空间
 	1.按照对应的fit的算法释放空间
 	2.注意检查要释放的start~end这个范围是否在dp有效分配范围内
