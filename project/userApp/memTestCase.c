@@ -266,6 +266,7 @@ int testdP3(int argc, unsigned char **argv){
 		if(x1) myPrintf(0x5, "success(addr=0x%x)!\n",x1);
 		else myPrintf(0x5, "failed!\n");
 		*(unsigned long*)x1 = 0xAAAAAAAA;		
+		myPrintf(0x7, "%x %x\n", *(unsigned long*)x1,x1);
 		dPartitionWalkByAddr(xHandler);
 
 		x2 = dPartitionAlloc(xHandler,0x20); 

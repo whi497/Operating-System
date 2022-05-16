@@ -20,6 +20,7 @@ int strncpy(unsigned char *src, unsigned char *dst, unsigned int n){
         nn++;
 	    if (nn >= n) break;
     }
+    *dst = '\0';
     return nn;
 }
 

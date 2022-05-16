@@ -23,13 +23,13 @@ int getCmdline(unsigned char *buf, int limit){
     return n;
 }
 
-typedef struct cmd {
-    unsigned char cmd[20+1]; //TODO: dynamic
+typedef struct cmd {//all dynamic
+    unsigned char* cmd;
     int (*func)(int argc, unsigned char **argv);
     void (*help_func)(void);
-    unsigned char description[100+1]; //TODO: dynamic?   
+    unsigned char* description;
     struct cmd * nextCmd;
-} cmd;
+} CMD;
 
 #define cmd_size sizeof(struct cmd)
 
@@ -48,16 +48,35 @@ int listCmds(int argc, unsigned char **argv){
 }
 
 void addNewCmd(	unsigned char *cmd, 
-		int (*func)(int argc, unsigned char **argv), 
-		void (*help_func)(void), 
-		unsigned char* description){
-            //todo
+	int (*func)(int argc, unsigned char **argv), 
+	void (*help_func)(void), 
+	unsigned char* description){
 	//本函数需要实现！！！
     /*功能：增加命令
     1.使用malloc创建一个cm的结构体，新增命令。
     2.同时还需要维护一个表头为ourCmds的链表。
     */
-
+    CMD* new_cmd = (CMD*)malloc(sizeof(CMD));
+    // dPartitionWalkByAddr(pMemHandler);
+    // if(new_cmd) myPrintf(0x5, "success malloc\n");
+    unsigned char* namecmd = (unsigned char*)malloc(strLength(cmd));
+    unsigned char* descripcmd = (unsigned char*)malloc(strLength(description));
+    strncpy(cmd,namecmd,strLength(cmd));
+    strncpy(description,descripcmd,strLength(description));
+    // myPrintf(0x7,"%d %d\n%s\n%s\n",strLength(cmd),strLength(namecmd),cmd,namecmd);
+    new_cmd->cmd = namecmd;
+    new_cmd->func = func;
+    new_cmd->help_func = help_func;
+    new_cmd->description = descripcmd;
+    new_cmd->nextCmd = NULL;
+    // myPrintf(0x7,"%s %s\n",new_cmd->cmd,new_cmd->description);
+    CMD* temp = ourCmds;
+    if(temp==NULL) ourCmds = new_cmd;//尾插法
+    else{
+        while(temp->nextCmd!=NULL) 
+            temp = temp->nextCmd;
+        temp->nextCmd = new_cmd;
+    }
 }
 
 void help_help(void){
@@ -89,6 +108,7 @@ struct cmd *findCmd(unsigned char *cmd){
 	int found = 0;
         while (tmpCmd != NULL) {  //at lease 2 cmds            
             if (strcmp(cmd,tmpCmd->cmd)==0){
+            myPrintf(0x7,"%s %s\n",cmd,tmpCmd->cmd);
 		    found=1;
 		    break;
 	    }
@@ -134,7 +154,7 @@ void startShell(void){
     //myPrintf(0x7,"StartShell:\n");     
     
     while(1) {
-        myPrintf(0x3,"Student >:");
+        myPrintf(0x3,"Ang_yz >>:");
         getCmdline(&cmdline[0],100);
         myPrintf(0x7,cmdline);
 

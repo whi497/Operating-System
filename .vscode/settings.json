@@ -16,5 +16,5 @@
         "wallclock.h": "c",
         "mem.h": "c"
     },
-    "todo-tree.tree.scanMode": "open files"
+    "todo-tree.tree.scanMode": "workspace only"
 }

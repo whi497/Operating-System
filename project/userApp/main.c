@@ -21,7 +21,6 @@ void myMain(void){
     clear_screen();
 
     doSomeTestBefore();
-
 	initShell();
     memTestCaseInit();
     startShell();

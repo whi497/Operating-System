@@ -23,17 +23,21 @@ void osStart(void){
 
 	clear_screen();
 
+	MemInit();
+	kMemInit();
 	pMemInit();  //after this, we can use kmalloc/kfree and malloc/free
 
 	{
-		unsigned long tmp = dPartitionAlloc(pMemHandler,100);
-		dPartitionWalkByAddr(pMemHandler);
-		dPartitionFree(pMemHandler,tmp);
-		dPartitionWalkByAddr(pMemHandler);
+		dPartitionWalkByAddr(kpMemHandler);
+		unsigned long tmp = dPartitionAlloc(kpMemHandler,100);
+		dPartitionWalkByAddr(kpMemHandler);
+		dPartitionFree(kpMemHandler,tmp);
+		dPartitionWalkByAddr(kpMemHandler);
 	}
 
 	// finished kernel init
 	// NOW, run userApp
+	// while(1);//debug
 	myPrintk(0x2,"START RUNNING......\n");	
 	myMain();
 	myPrintk(0x2, "STOP RUNNING......ShutDown\n");

@@ -1,6 +1,6 @@
 #ifndef __MEM_H__
 #define __MEM_H__
-//TODO: seperate user interface and kernel interface
+//*// TODO: seperate user interface and kernel interface
 unsigned long dPartitionInit(unsigned long start, unsigned long size);
 unsigned long dPartitionAlloc(unsigned long dp, unsigned long size);
 unsigned long dPartitionFree( unsigned long dp, unsigned long start);
@@ -14,8 +14,11 @@ unsigned long eFPartitionFree(unsigned long EFPHandler,unsigned long mbStart);
 
 void eFPartitionWalkByAddr(unsigned long efp);
 
+void MemInit(void);
+void kMemInit(void);
 void pMemInit(void);
 
 unsigned long pMemHandler;
-//TODO: seperate kernel heap and user heap
+unsigned long kpMemHandler;
+//*// TODO: seperate kernel heap and user heap
 #endif

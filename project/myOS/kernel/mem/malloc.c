@@ -14,3 +14,4 @@ unsigned long free(unsigned long start){
     //调用实现的dPartition或者是ePartition的free
     return dPartitionFree(pMemHandler,start);
 }
+
