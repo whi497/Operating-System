@@ -1,1 +1,0 @@
-I386_OBJS = output/myOS/i386/%.o

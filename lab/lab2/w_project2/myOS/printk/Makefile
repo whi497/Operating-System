@@ -1,1 +1,0 @@
-PRINTK_OBJS = output/myOS/printk/%.o

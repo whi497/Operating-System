@@ -1,1 +1,0 @@
-DEV_OBJS = output/myOS/dev/%.o
