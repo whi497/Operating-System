@@ -6,6 +6,7 @@ unsigned long dPartitionAlloc(unsigned long dp, unsigned long size);
 unsigned long dPartitionFree( unsigned long dp, unsigned long start);
 
 void dPartitionWalkByAddr(unsigned long dp);
+void showpartofEMB(unsigned long dp);
 
 unsigned long eFPartitionInit(unsigned long start, unsigned long perSize, unsigned long n);
 unsigned long eFPartitionTotalSize(unsigned long perSize, unsigned long n);

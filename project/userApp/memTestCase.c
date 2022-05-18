@@ -299,6 +299,68 @@ int testdP3(int argc, unsigned char **argv){
 	} else myPrintf(0x7,"MALLOC FAILED, CAN't TEST dPartition\n");		
 }
 
+
+//==================test for kmalloc and kfree========================
+
+
+int testkmalloc(int argc, unsigned char **argv){
+	unsigned long kmem;
+	unsigned long mem;
+	myPrintf(0x7,"First we show the kernel memory and user memory\n");
+	myPrintf(0x7,"Kernel memory:\n");
+	dPartitionWalkByAddr(kpMemHandler);
+	myPrintf(0x7,"User memory:");
+	myPrintf(0x7,"(some have already be used for registered cmds, in this test we do not show all of them)\n");
+	showpartofEMB(pMemHandler);
+	myPrintf(0x7,"The two part of memorys are seperate by a block with 0x1000 bytes to prevent overflow\n\n");
+	myPrintk(0x7,"press any key to continue ...\n");
+	uart_get_char();
+
+	myPrintf(0x7,"\nnow we kmalloc() a small block with 0x100bytes and malloc() another block with same size\n");
+
+	kmem = kmalloc(0x100);
+	mem = malloc(0x100);
+
+	myPrintf(0x7,"Kernel memory:\n");
+	dPartitionWalkByAddr(kpMemHandler);
+	myPrintf(0x7,"User memory:\n");
+	showpartofEMB(pMemHandler);
+	myPrintk(0x7,"press any key to continue ...\n");
+	uart_get_char();
+	
+	char* buffer1 = (char*)kmem;
+	char* buffer2 = (char*)mem;
+
+	for(int i=0;i<12;i++) *(buffer1+i) = '*';
+	*(buffer1+12) = '\n';
+	*(buffer1+13) = '\000';
+
+	for(int i=0;i<12;i++) *(buffer2+i) = '#';
+	*(buffer2+12) = '\n';
+	*(buffer2+13) = '\000';
+
+	myPrintf(0x5, "\nWe start to fill the two blocks with some chars\n");
+	myPrintf(0x5, "BUF1(size=0x100, addr=0x%x) filled with 12(*): ",(unsigned long)buffer1);
+	myPrintf(0x7,buffer1);
+	myPrintf(0x5, "BUF2(size=0x100, addr=0x%x) filled with 12(#): ", (unsigned long)buffer2);
+	myPrintf(0x7,buffer2);
+	myPrintf(0x7,"\n");
+	myPrintk(0x7,"press any key to continue ...\n");
+	uart_get_char();
+
+	myPrintf(0x7,"\nnow we free them\n");
+	kfree(kmem);
+	free(mem);
+
+	myPrintf(0x7,"show them again\n");
+	myPrintf(0x7,"Kernel memory:\n");
+	dPartitionWalkByAddr(kpMemHandler);
+	myPrintf(0x7,"User memory:\n");
+	showpartofEMB(pMemHandler);	
+
+	return 0;
+}
+
 #define NULL (void*)0
 void memTestCaseInit(void){	
 	addNewCmd("testMalloc1\0", testCase1, NULL, "Malloc, write and read.\0");
@@ -310,4 +372,7 @@ void memTestCaseInit(void){
 	addNewCmd("testdP3\0", testdP3, NULL, "Init a dPatition(size=0x100) A:B:C:- ==> A:B:- ==> A:- ==> - .\0");
 	
 	addNewCmd("testeFP\0", testeFP, NULL, "Init a eFPatition. Alloc all and Free all.\0");
+	addNewCmd("testkmalloc\0", testkmalloc, NULL, "kmalloc and malloc, show the memory, then write seperately and free them.\0");
 }
+
+

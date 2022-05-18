@@ -11,7 +11,8 @@
 
 //only for userApp
 #include "include/malloc.h"
-
+//used for test kmalloc and kfree
+#include "include/kmalloc.h"
 int myPrintf(int color,const char *format, ...);
 
 #endif

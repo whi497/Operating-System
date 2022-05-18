@@ -8,11 +8,8 @@
 	/*
 	这里实现kmalloc/kfree，调用dp或者是efp里的函数实现即可
 	*/
-unsigned long kmalloc(unsigned long size) {//used for kernal
-    return dPartitionAlloc(kpMemHandler, size);
-}
+//实现于kmalloc.c避免引用头文件导致重定义（与malloc.c在同一个文件夹下）
+unsigned long kmalloc(unsigned long size);
 
-unsigned long kfree(unsigned long start) {//used for kernal
-    return dPartitionFree(kpMemHandler, start);
-}
+unsigned long kfree(unsigned long start);
 #endif

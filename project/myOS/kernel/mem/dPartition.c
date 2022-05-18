@@ -82,6 +82,22 @@ void dPartitionWalkByAddr(unsigned long dp){
 
 }
 
+void showpartofEMB(unsigned long dp){//用于测试kmalloc和malloc的分离，输出跳过用于cmd的小块emb
+	dPartition* mem_pointer = (dPartition*)dp;
+	showdPartition(mem_pointer);
+	unsigned long check_addr = dp + dPartition_size;
+	EMB* embPointer = (EMB*)check_addr;
+	int n=0;
+	do {
+		if(n<3 | (embPointer->size>=0x100))
+			showEMB(embPointer);
+		if(n==3) myPrintk(0x3,"...\n");
+		check_addr = check_addr + EMB_size + embPointer->size;//按地址大小找到下一个EMB
+		embPointer = (EMB*)check_addr;
+		n++;
+	}while(check_addr<dp+mem_pointer->totalSize);
+}
+
 //=================firstfit, order: address, low-->high=====================
 /**
  * return value: addr (without overhead, can directly used by user)
@@ -169,73 +185,44 @@ unsigned long dPartitionFreeFirstFit(unsigned long dp, unsigned long start){
 	unsigned long nextaddr = 0;
 	EMB* index_block = (EMB*)indexaddr;
 	do{
-		if(indexaddr<start) preaddr = indexaddr;
-		if(indexaddr>start) {
+		if(indexaddr<start) preaddr = indexaddr;//反复更新待释放块地址前的空闲块
+		if(indexaddr>start) {//确定待释放块地址后最近一个空闲块和前最近一个空闲块
 			nextaddr = indexaddr;
+			if(nextaddr != 0){
+				EMB* next_block = (EMB*)nextaddr;
+				if(start+blockfree->size+EMB_size == nextaddr){//merge block free
+					dynamic_block->size += EMB_size + blockfree->size;
+					blockfree->nextStart = next_block->nextStart;
+					blockfree->size += next_block->size + EMB_size;
+				}
+				else{
+					dynamic_block->size += blockfree->size;
+					blockfree->nextStart = (unsigned long)next_block;
+				}
+			}
+			else {//释放块在尾部
+				dynamic_block->size += blockfree->size;
+				blockfree->nextStart = 0;
+			}
+			if(preaddr != 0){
+				EMB* pre_block = (EMB*)preaddr;
+				if(preaddr+pre_block->size+EMB_size == start) {//merge block free
+					pre_block->nextStart = blockfree->nextStart;
+					pre_block->size += blockfree->size + EMB_size;
+					dynamic_block->size += EMB_size;
+				}
+				else
+					pre_block->nextStart = (unsigned long)blockfree;
+			}
+			else //释放块在最前面
+				dynamic_block->firstFreeStart = (unsigned long)blockfree;
 			break;
 		}
 		indexaddr = index_block->nextStart;
 		index_block = (EMB*)indexaddr;
-	}while(indexaddr);//找到其地址前和后的空闲块
+	}while(indexaddr);
 	// myPrintk(0x7,"%x %x\n",preaddr,nextaddr);//debug 
 	// myPrintk(0x7,"%x\n",blockfree->size);
-	if(nextaddr != 0){
-		EMB* next_block = (EMB*)nextaddr;
-		if(start+blockfree->size+EMB_size == nextaddr){//merge block free
-			dynamic_block->size += EMB_size + blockfree->size;
-			blockfree->nextStart = next_block->nextStart;
-			blockfree->size += next_block->size + EMB_size;
-		}
-		else{
-			dynamic_block->size += blockfree->size;
-			blockfree->nextStart = (unsigned long)next_block;
-		}
-	}
-	else {
-		dynamic_block->size += blockfree->size;
-		blockfree->nextStart = 0;
-	}
-	if(preaddr != 0){
-		EMB* pre_block = (EMB*)preaddr;
-		if(preaddr+pre_block->size+EMB_size == start) {//merge block free
-			pre_block->nextStart = blockfree->nextStart;
-			pre_block->size += blockfree->size + EMB_size;
-			dynamic_block->size += EMB_size;
-		}
-		else{
-			pre_block->nextStart = (unsigned long)blockfree;
-		}
-	}
-	else {
-		dynamic_block->firstFreeStart = (unsigned long)blockfree;
-	}
-	// do{
-	// 	if(start<findaddr){
-	// 		if(findaddr == dynamic_block->firstFreeStart){//要释放的这个块将成为第一个空闲块				
-	// 			if(start+blockfree->size == findaddr){//merge free block
-	// 				dynamic_block->firstFreeStart = blockfree;
-	// 				blockfree->nextStart = index_block->nextStart;
-	// 			}
-	// 			else{
-	// 				dynamic_block->firstFreeStart = blockfree;
-	// 				blockfree->nextStart = index_block;
-	// 			}
-	// 		}
-	// 		else{
-	// 			if
-	// 			if(start+blockfree->size == findaddr){//merge free block
-	// 				pre_block->nextStart = blockfree;
-	// 				blockfree->nextStart = index_block->nextStart;
-	// 			}
-	// 			else{
-	// 				dynamic_block->firstFreeStart = blockfree;
-	// 				blockfree->nextStart = index_block;
-	// 			}
-	// 		}
-	// 	}
-	// }while();
-	// blockfree->nextStart = dynamic_block->firstFreeStart;
-	// dynamic_block->firstFreeStart = blockfree;
 	return 1;
 }
 
