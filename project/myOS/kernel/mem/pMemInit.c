@@ -18,54 +18,6 @@ void memTest(unsigned long start, unsigned long grainSize){
 	2、grainsize不能太小，也要做一个if判断
 	*/
 
-	// if (start < 0x100000)
-	// 	start = 0x100000;
-	// if (grainSize < 2)
-	// 	grainSize = 2;
-
-	// unsigned long addr = start;
-    // unsigned short data;
-    // unsigned short *addr_head, *addr_tail;
-    // unsigned short test_data1 = 0xAA55;
-    // unsigned short test_data2 = 0x55AA;
-	// int flag_fail = 0; // whether the test fails
-	// MemSize = 0;
-	// MemStart = start;
-
-	// // get the size of pMem
-    // while (!flag_fail) {
-    //     flag_fail = 0;
-
-    //     addr_head = (unsigned short *)addr; // the first 2 bytes of current grain
-    //     addr_tail = (unsigned short *)(addr + grainSize - 2); // the last 2 bytes of current grain
-
-    //     data = *addr_head; // read original data
-    //     *addr_head = test_data1; // write 0xAA55
-    //     if (*addr_head != test_data1)
-    //         flag_fail = 1;
-    //     *addr_head = test_data2; // write 0x55AA
-    //     if (*addr_head != test_data2)
-    //         flag_fail = 1;
-    //     *addr_head = data; // write back original data
-
-    //     data = *addr_tail; // read original data
-    //     *addr_tail = test_data1; // write 0xAA55
-    //     if (*addr_tail != test_data1)
-    //         flag_fail = 1;
-    //     *addr_tail = test_data2; // write 0x55AA
-    //     if (*addr_tail != test_data2)
-    //         flag_fail = 1;
-    //     *addr_tail = data; // write back original data
-        
-    //     if (!flag_fail) {
-    //         addr += grainSize;
-    //         MemSize += grainSize;
-    //     }
-    // }
-	
-	// myPrintk(0x7, "MemStart: %x\n", MemStart);
-	// myPrintk(0x7, "MemSize:  %x\n", MemSize);
-
 	
 	if(start<0x100000) {
 		myPrintk(12,"Error:illegal start address\n");
@@ -81,7 +33,7 @@ void memTest(unsigned long start, unsigned long grainSize){
 
 	unsigned short * pwrite;
 	unsigned short hold;
-	while(1) {//todo:to be modified
+	while(1) {
 		pwrite = (unsigned short *) grain_head;
 		//test grainhead
 		hold = *pwrite;
