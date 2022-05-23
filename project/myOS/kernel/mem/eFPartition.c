@@ -2,10 +2,10 @@
 // 一个EEB表示一个空闲可用的Block
 typedef struct EEB {
 	unsigned long next_start;
-	unsigned char state;
-}EEB;	//占5个字节
+	unsigned long state;
+}EEB;	//占8个字节
 
-#define EEB_size 5
+#define EEB_size 8
 
 void showEEB(struct EEB *eeb){
 	if(eeb->state == 1){
@@ -91,7 +91,7 @@ unsigned long eFPartitionInit(unsigned long start, unsigned long perSize, unsign
 		epointer->next_start = check_addr + EEB_size + finalpersize;
 		epointer->state = 0;
 		if(i == n-1) epointer->next_start = 0;
-		myPrintk(0x7,"%x %x %x\n",check_addr,epointer->next_start,finalpersize);
+		// myPrintk(0x7,"%x %x %x\n",check_addr,epointer->next_start,finalpersize);//debug
 		// epointer = (EEB*)epointer->next_start;
 		check_addr += finalpersize + EEB_size;
 	}

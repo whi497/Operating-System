@@ -11,7 +11,7 @@ typedef struct dPartition{
 #define dPartition_size ((unsigned long)0xC)
 
 void showdPartition(struct dPartition *dp){
-	myPrintk(0x5,"dPartition(start=0x%x, size=0x%x, firstFreeStart=0x%x)\n", dp, dp->size,dp->firstFreeStart);
+	myPrintk(0x5,"dPartition(start=0x%x, totalSize=0x%x, size=0x%x, firstFreeStart=0x%x)\n", dp,dp->totalSize,dp->size,dp->firstFreeStart);
 }
 
 
@@ -53,7 +53,7 @@ unsigned long dPartitionInit(unsigned long start, unsigned long totalSize){
 	}
 	dPartition* dynamic_block = (dPartition*) start;
 	dynamic_block->totalSize = totalSize;
-	dynamic_block->size = totalSize;	//initial the dPartition
+	dynamic_block->size = totalSize - dPartition_size - EMB_size;	//initial the dPartition
 	dynamic_block->firstFreeStart = start + dPartition_size;
 	EMB* dy_block = (EMB*)(start+dPartition_size);
 	dy_block->nextStart = 0;
@@ -128,7 +128,7 @@ unsigned long dPartitionAllocFirstFit(unsigned long dp, unsigned long size){
 	do{
 		if(dy_block->size>=finalsize){//space enough
 			if(dy_block->size-finalsize<EMB_size){//分配完多余剩余空间不足一个emb，直接全部分配
-			    myPrintk(0x7,"here");
+			    // myPrintk(0x7,"here");
 				dynamic_block->firstFreeStart = dy_block->nextStart;
 				dynamic_block->size = dynamic_block->size - dy_block->size;
 				dy_block->state = 1;

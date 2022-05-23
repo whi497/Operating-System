@@ -190,6 +190,8 @@ int testeFP(int argc, unsigned char **argv){
 		xHandler = eFPartitionInit(x,psize,n);
 
 		eFPartitionWalkByAddr(xHandler);
+		myPrintk(0x7,"press any key to continue ...\n");//add
+		uart_get_char();
 
 		x1 = eFPartitionAlloc(xHandler);
 		if(x1){
@@ -225,6 +227,8 @@ int testeFP(int argc, unsigned char **argv){
 			myPrintf(0x7,"Alloc memBlock E, start = 0x%x: 0x%x \n",x5,*(unsigned long *)x5);
 		} else myPrintf(0x7,"Alloc memBlock E, failed!\n");
 		eFPartitionWalkByAddr(xHandler);
+		myPrintk(0x7,"press any key to continue ...\n");//add
+		uart_get_char();
 
 		myPrintf(0x7,"Now, release A.\n");
 		eFPartitionFree(xHandler,x1);
@@ -259,7 +263,7 @@ int testdP3(int argc, unsigned char **argv){
 		xHandler = dPartitionInit(x,tsize);
 		dPartitionWalkByAddr(x);
 
-		myPrintf(0x7,"Now, A:B:C:- ==> -:B:C:- ==> -:C- ==> - .\n");
+		myPrintf(0x7,"Now, A:B:C:- ==> A:B:- ==> A:- ==> - .\n");
 
 		x1 = dPartitionAlloc(xHandler,0x10); 
 		myPrintf(0x7, "Alloc memBlock A with size 0x10: ");
@@ -283,7 +287,7 @@ int testdP3(int argc, unsigned char **argv){
 		*(unsigned long*)x3 = 0xCCCCCCCC;		
 		dPartitionWalkByAddr(xHandler);
 		
-		myPrintf(0x7,"At last, release C.\n");
+		myPrintf(0x7,"Now, release C.\n");
 		dPartitionFree(xHandler,x3); 
 		dPartitionWalkByAddr(xHandler);
 
@@ -291,7 +295,7 @@ int testdP3(int argc, unsigned char **argv){
 		dPartitionFree(xHandler,x2); 
 		dPartitionWalkByAddr(xHandler);
 
-		myPrintf(0x7,"Now, release A.\n");
+		myPrintf(0x7,"At last, release A.\n");
 		dPartitionFree(xHandler,x1); 
 		dPartitionWalkByAddr(xHandler);
 		

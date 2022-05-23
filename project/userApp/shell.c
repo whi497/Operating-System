@@ -56,20 +56,16 @@ void addNewCmd(	unsigned char *cmd,
     1.使用malloc创建一个cm的结构体，新增命令。
     2.同时还需要维护一个表头为ourCmds的链表。
     */
-    CMD* new_cmd = (CMD*)malloc(sizeof(CMD));
-    // dPartitionWalkByAddr(pMemHandler);
-    // if(new_cmd) myPrintf(0x5, "success malloc\n");
+    CMD* new_cmd = (CMD*)malloc(sizeof(CMD));//malloc space for cmd data
     unsigned char* namecmd = (unsigned char*)malloc(strLength(cmd));
     unsigned char* descripcmd = (unsigned char*)malloc(strLength(description));
     strncpy(cmd,namecmd,strLength(cmd));
     strncpy(description,descripcmd,strLength(description));
-    // myPrintf(0x7,"%d %d\n%s\n%s\n",strLength(cmd),strLength(namecmd),cmd,namecmd);
     new_cmd->cmd = namecmd;
     new_cmd->func = func;
     new_cmd->help_func = help_func;
     new_cmd->description = descripcmd;
     new_cmd->nextCmd = NULL;
-    // myPrintf(0x7,"%s %s\n",new_cmd->cmd,new_cmd->description);
     CMD* temp = ourCmds;
     if(temp==NULL) ourCmds = new_cmd;//尾插法
     else{
