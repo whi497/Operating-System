@@ -1,0 +1,9 @@
+{
+    "C_Cpp.errorSquiggles": "Enabled",
+    "files.associations": {
+        "*.S": "asm-intel-x86-generic",
+        "cstdlib": "c",
+        "mem.h": "c",
+        "userinterface.h": "c"
+    }
+}
