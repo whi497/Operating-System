@@ -22,6 +22,7 @@ struct scheduler {
 myTCB rdqueuehead; //就绪队列，schedule()执行时总是取位于队头的任务执行
 
 extern struct scheduler sche_PRIO;
+extern struct scheduler sche_RR;
 
 //使用define避免单开一个.c文件
 #define setSysScheduler(what){ \
@@ -31,11 +32,16 @@ extern struct scheduler sche_PRIO;
         case SCHEDULER_PRIORITY0: { \
             sche = sche_PRIO; \
             sche.schedulerInit_func(); \
-        }break; \
-        case SCHEDULER_RR: break; \
+            break; \
+        } \
+        case SCHEDULER_RR: { \
+            sche = sche_RR; \
+            sche.schedulerInit_func(); \
+            break; \
+        } \
         default: break; \
     } \
-}
+} \
 
 
 #endif

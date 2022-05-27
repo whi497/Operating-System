@@ -16,7 +16,7 @@ void tick(void){
 	oneTickUpdateWallClock();
 	if(check_flag){
 		// disable_interrupt();
-		// myPrintk(0x7,"tick = %d\n",tick_number);
+		myPrintk(0x7,"tick = %d\n",tick_number);
 		// while(1);
 		// enable_interrupt();//debug
 		taskCheck();

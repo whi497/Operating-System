@@ -3,6 +3,7 @@
 #define NULL (void*)0
 #define UNKNOWN -1
 
+// #include "../../userApp/usertask.h"
 #define initTskBdy myMain//对接main
 
 #define KSTKSIZE 0x2000
@@ -22,6 +23,8 @@
 #define READY 1
 #define RUNNING 2
 
+extern int schepolicy;
+
 typedef struct tskPara {
     unsigned int priority;
     unsigned int arrTime;
@@ -38,6 +41,7 @@ typedef struct TCB{
     unsigned long* tskptr;//栈指针
     unsigned long* stktop;//栈顶
     unsigned long stksize;
+    unsigned long runtime;//for rr sche
     void (* task_func)(void);
     tskPara* para;
     struct TCB* nexttcb;

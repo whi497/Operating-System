@@ -31,7 +31,7 @@ void taskCheck(void) {
     // myPrintk(0x7, "\n");
     // myPrintk(0x7,"arrhead = %d\n",ptr->para->arrTime);
     if(!ptr) return ;
-    disable_interrupt();
+    // disable_interrupt();
     while(ptr) {
         myTCB* tsktcb = NULL;
         // myPrintk(0x7,"arrtime:%d,seconds:%d\n",ptr->para->arrTime,seconds);
@@ -54,5 +54,9 @@ void taskCheck(void) {
         }
         else break;
     }
-    enable_interrupt();
+    for(int i=0;i<HOOK_LIST_SUM;i++){
+        if(tskclklist[i])tskclklist[i]();
+        else break;
+    }
+    // enable_interrupt();
 }

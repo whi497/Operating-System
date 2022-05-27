@@ -10,7 +10,7 @@ void MyTask1(void) {
 
 void MyTask2(void) {//in this task we set ourclock
 	myPrintf(0x7, "==================Task 2==================\n");
-	myPrintf(0x7, "                Set Clock!                \n");
+	myPrintf(0x7, "                Get Clock!                \n");
     
     int h,m,s;
     h=0;m=0;s=0;
@@ -29,6 +29,11 @@ void MyTask3(void) {//in this task we show the memory we have
 	showpartofEMB(pMemHandler);
 
 	myPrintf(0x7,"\n");
+}
+
+void MyTask4(void) {
+	myPrintf(0x7, "==================Task 4==================\n");
+	myPrintf(0x7, "                Do Nothing   		   \n\n");
 }
 
 void ShellTask(void) {//task for starting the shell

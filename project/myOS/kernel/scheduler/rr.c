@@ -1,24 +1,31 @@
-#include "../../include/priority.h"
+#include "../../include/rr.h"
 #include "../../include/myPrintk.h"
 #include "../../include/irq.h"
+#include "../../include/taskclock.h"
 #include "../../include/task_arr.h"
+#include "../../../userApp/usertask.h"
 
-struct scheduler sche_PRIO = {
-    SCHEDULER_PRIORITY0,
+int timeslice;
+int counter=0;
+
+struct scheduler sche_RR = {
+    SCHEDULER_RR,
     NULL,
-    eqbypriority,
-    dqbypriority,
-    pri_initscheduler,
-    schedulebypriority,
-    pri_createTsk,
-    pri_tickhook,
+    eq_rr,
+    dq_rr,
+    rr_initscheduler,
+    schedulebyRR,
+    rr_createTsk,
+    rr_tickhook,
 };
 
-void pri_initscheduler(void){
+void rr_initscheduler(void) {
     rdqueuehead.nexttcb = NULL;
+    timeslice = TimeSlice;
+    addTaskClockHook(rr_tickhook);
 }
 
-void eqbypriority(myTCB* task){
+void eq_rr(myTCB* task){
     myTCB* ptr = rdqueuehead.nexttcb;
     myTCB* preptr = &rdqueuehead;
 
@@ -29,32 +36,17 @@ void eqbypriority(myTCB* task){
         task->nexttcb = NULL;
     }
     else{
-        for(;ptr;ptr=ptr->nexttcb){
-            if(task->para->priority > ptr->para->priority){
-                preptr->nexttcb = task;
-                task->nexttcb = ptr;
-                break;
-            }
-            // if(ptr->nextTID 
+        while(ptr){
             preptr = ptr;
-        }
-        if(!ptr){
-            preptr->nexttcb = task;
-            task->nexttcb = NULL;
+            ptr = ptr->nexttcb;
         }
     }
-    // ptr = rdqueuehead.nexttcb;
-    // if(ptr->para->priority != 0){
-    //     for(;ptr;ptr = ptr->nexttcb){//debug
-    //         myPrintk(0x7,"%d",ptr->para->priority);
-    //     }
-    //     myPrintk(0x7,"\n");
-    //     myPrintk(0x7,"finishedeq\n");//debug
-    // }
+    preptr->nexttcb = task;
+    task->nexttcb = NULL;
     enable_interrupt();
 }
 
-myTCB* dqbypriority(void){
+myTCB* dq_rr(void){
     if(!rdqueuehead.nexttcb)
         return NULL;
 
@@ -64,40 +56,24 @@ myTCB* dqbypriority(void){
         rdqueuehead.nexttcb = NULL;
     else
         rdqueuehead.nexttcb = rdqueuehead.nexttcb->nexttcb;
-    // myTCB* p = rdqueuehead.nexttcb;
-    // if(p){
-    //     for(;p;p = p->nexttcb){
-    //         myPrintk(0x7,"%d",p->para->priority);
-    //     } 
-    //     myPrintk(0x7,"\n");
-    //     myPrintk(0x7,"finisheddq\n");//debug
-    // }
     enable_interrupt();
 
     return ptr;
 }
 
-void schedulebypriority(void){
-    // if(p!=NULL){
-    //     for(;p;p = p->nexttcb){
-    //         myPrintk(0x7,"%d",p->para->priority);
-    //     } 
-    //     myPrintk(0x7,"\n");
-    // }
-    // while(1){
+void schedulebyRR(void){
     myTCB* tsk = rdqueuehead.nexttcb;
     if(rdqueuehead.nexttcb == NULL){//没有任务待执行则执行idle任务
         if(idletcb==NULL){//idle已被摧毁则重新创建并launch
             int idletid = createTsk(idleTskBdy);
             idletcb = tcb_pool[idletid];
-            setTskPara(PRIORITY, 0, idletcb->para);
+            setTskPara(EXETIME, 0, idletcb->para);
             launchtsk(idletcb,0);
             return ;
         }
         else tsk = idletcb;
-        
     }
-    else dqbypriority();
+    else dq_rr();
     // myPrintk(0x7,"heresche0\n"); 
     if(tsk->id == idletcb->id){
         if(runningtcb){
@@ -107,21 +83,30 @@ void schedulebypriority(void){
     }
     
     if(runningtcb == idletcb) {idletcb = NULL;}//idle将被摧毁，置其指示指针为NULL
-    if(runningtcb) {destroyTsk(runningtcb->id);}//摧毁当前任务（基于非抢占式，调度时认为任务已完成）
+    if(runningtcb) {
+        if(runningtcb == idletcb | runningtcb->runtime >= runningtcb->para->exeTime)
+            destroyTsk(runningtcb->id);
+        else eq_rr(runningtcb);
+    }//摧毁当前任务（基于抢占式，调度时判断任务是否已执行完）
     runningtcb = tsk;
+    counter = 0;//重置时间片计时为0
     // myTCB* p = rdqueuehead.nexttcb;
     // myPrintk(0x7,"%d %d\n",(int)p,(int)(p->nexttcb));
     // myPrintk(0x7,"%d, %d\n",tsk->id,tsk->para->arrTime);
     tsk->state = RUNNING;
 
     context_switch(&BspContext,tsk->tskptr);
-    // }
 }
 
-void pri_createTsk(myTCB* created){
-    return ;
+void rr_tickhook(void){
+    counter++;
+    runningtcb->runtime++;
+    if(counter == timeslice){
+        sche.schedule();
+        counter = 0;
+    }
 }
 
-void pri_tickhook(void){
+void rr_createTsk(myTCB* created){
     return ;
 }

@@ -6,6 +6,7 @@
 #include "../../include/myPrintk.h"
 #include "../../include/priority.h"
 
+int schepolicy = 3;
 //===============================task para management============================//
 void initTskPara(tskPara **buffer){
     *buffer = (tskPara*)kmalloc(sizeof(tskPara));
@@ -73,6 +74,7 @@ int createTsk(void (*tskBody)(void)){
     tsk->tskptr = tsk->stktop + TSK_STK_SIZE - 1;
     // myPrintk(0x7,"%d %d\n",(unsigned long)tsk->stktop,(unsigned long)tsk->taskptr);//debug
     tsk->stksize = TSK_STK_SIZE;
+    tsk->runtime = 0;
     tsk->task_func = tskBody;
     initTskPara(&(tsk->para));
     tsk->nexttcb = NULL;
@@ -110,7 +112,7 @@ void tskStart(myTCB *tsk){
 
 void tskEnd(void){
     unsigned long* ptr = runningtcb->tskptr;
-    destroyTsk(runningtcb->id);
+    destroyTsk(runningtcb->id);//对于抢占式
     runningtcb = NULL;
     context_switch(&ptr, BspContext);
 }
@@ -132,7 +134,7 @@ void idleTskBdy(void){
 }
 
 void iniTskManager(void){
-    setSysScheduler(SCHEDULER_PRIORITY0);
+    setSysScheduler(schepolicy);
 
     freetcb = NULL;
     inittcb = NULL;

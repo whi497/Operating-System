@@ -29,10 +29,10 @@ void eqbyarrtime(myTCB* task){
         }
     }
     ptr = arrqueue.nexttcb;
-    for(;ptr;ptr = ptr->nexttcb){//debug
-		myPrintk(0x7,"%d",ptr->para->arrTime);
-	}
-    myPrintk(0x7, "\n");
+    // for(;ptr;ptr = ptr->nexttcb){//debug
+	// 	myPrintk(0x7,"%d",ptr->para->arrTime);
+	// }
+    // myPrintk(0x7, "\n");
     enable_interrupt();
 }
 

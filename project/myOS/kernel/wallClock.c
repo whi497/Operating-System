@@ -2,6 +2,7 @@
 
 int hh=0,mm=0,ss=0,ms=0;
 extern int check_flag;
+extern int tick_number;
 
 void setWallClock(int h, int m, int s){
         if ( (h<0) || (h>24) ) hh=0;
@@ -38,4 +39,16 @@ void oneTickUpdateWallClock(void){
 //TODO: buffer的长度：至少10个字节
 void getTimeStamp(unsigned char *buffer){
         sprintf(buffer,"[%02d:%02d:%02d:%03d]",hh,mm,ss,ms);
+}
+
+void wait(int s){
+        int start = ss;
+        int check = ss;
+        while(s){
+                check = ss;
+                if(check-start){
+                        s--;
+                        start = check;
+                }
+        };
 }

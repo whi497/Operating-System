@@ -25,13 +25,27 @@ void myMain(void){
 
     doSomeTestBefore();
 
-	test_prio_sche();
-
+	switch(schepolicy){ 
+        case SCHEDULER_FCFS: break; 
+        case SCHEDULER_SJF: break; 
+        case SCHEDULER_PRIORITY0: { 
+			test_prio_sche();
+            break; 
+        } 
+        case SCHEDULER_RR: { 
+			test_rr_sche();
+            break; 
+        } 
+        default: break; 
+    }
+	myPrintf(0x7,"waiting...\n");
+	wait(10);
+	myPrintf(0x7,"wait finish\n");	
 	// myTCB* ptr = rdqueuehead.nexttcb;
 	// for(;ptr;ptr = ptr->nexttcb){//debug
 	// 	myPrintf(0x7,"%d",ptr->para->priority);
 	// }
 	// myPrintf(0x7,"\n");
-	// while(1);
+	while(1);
     return;
 }
