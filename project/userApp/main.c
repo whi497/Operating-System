@@ -24,10 +24,10 @@ void myMain(void){
 	myPrintf(0x7, "            Initial user task...        \n\n");
 
     doSomeTestBefore();
-	
+
 	test_prio_sche();
 
-	myTCB* ptr = rdqueuehead.nexttcb;
+	// myTCB* ptr = rdqueuehead.nexttcb;
 	// for(;ptr;ptr = ptr->nexttcb){//debug
 	// 	myPrintf(0x7,"%d",ptr->para->priority);
 	// }

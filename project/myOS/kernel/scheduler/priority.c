@@ -23,8 +23,10 @@ void eqbypriority(myTCB* task){
 
     disable_interrupt();//入队保护
     // myPrintk(0x7, "eq priority = %d\n", task->para->priority);//debug
-    if(!rdqueuehead.nexttcb)
+    if(!rdqueuehead.nexttcb){
         rdqueuehead.nexttcb = task;
+        task->nexttcb = NULL;
+    }
     else{
         for(;ptr;ptr=ptr->nexttcb){
             if(task->para->priority > ptr->para->priority){
@@ -40,12 +42,14 @@ void eqbypriority(myTCB* task){
             task->nexttcb = NULL;
         }
     }
-    ptr = rdqueuehead.nexttcb;
-    // for(;ptr;ptr = ptr->nexttcb){//debug
-	// 	myPrintk(0x7,"%d",ptr->para->priority);
-	// }
-	// myPrintk(0x7,"\n");
-    // myPrintk(0x7,"finishedeq\n");//debug
+    // ptr = rdqueuehead.nexttcb;
+    // if(ptr->para->priority != 0){
+    //     for(;ptr;ptr = ptr->nexttcb){//debug
+    //         myPrintk(0x7,"%d",ptr->para->priority);
+    //     }
+    //     myPrintk(0x7,"\n");
+    //     myPrintk(0x7,"finishedeq\n");//debug
+    // }
     enable_interrupt();
 }
 
@@ -59,32 +63,64 @@ myTCB* dqbypriority(void){
         rdqueuehead.nexttcb = NULL;
     else
         rdqueuehead.nexttcb = rdqueuehead.nexttcb->nexttcb;
-    myTCB* p = rdqueuehead.nexttcb;
-    // for(;p;p = p->nexttcb){
-	// 	myPrintk(0x7,"%d",p->para->priority);
-	// } 
-    // myPrintk(0x7,"\n");
+    // myTCB* p = rdqueuehead.nexttcb;
+    // if(p){
+    //     for(;p;p = p->nexttcb){
+    //         myPrintk(0x7,"%d",p->para->priority);
+    //     } 
+    //     myPrintk(0x7,"\n");
+    //     myPrintk(0x7,"finisheddq\n");//debug
+    // }
     enable_interrupt();
 
     return ptr;
 }
 
 void schedulebypriority(void){
-    if(rdqueuehead.nexttcb == NULL)
-        return ;
-    
+    // if(p!=NULL){
+    //     for(;p;p = p->nexttcb){
+    //         myPrintk(0x7,"%d",p->para->priority);
+    //     } 
+    //     myPrintk(0x7,"\n");
+    // }
+    if(rdqueuehead.nexttcb == NULL){
+        if(idletcb)
+            eqbypriority(idletcb);//取出idle任务需放回
+        else{
+            int idletid = createTsk(idleTskBdy);
+            idletcb = tcb_pool[idletid];
+            setTskPara(PRIORITY, 0, idletcb->para);
+            launchtsk(idletcb,0);
+            myTCB* p = rdqueuehead.nexttcb;
+            myPrintk(0x7,"%d %d\n",(int)p,(int)(p->nexttcb));
+        }
+    }
+    // myPrintk(0x7,"heresche0\n"); 
     myTCB* tsk = dqbypriority();
     if(tsk->id == idletcb->id){
-        eqbypriority(idletcb);//取出idle任务需放回
-        // myPrintk(0x7,"here!\n");
-        // while(1);
-        if(runningtcb->id == idletcb->id)
-            return ;//only idle task remain, return to restart schedule
+        if(runningtcb){
+            if(runningtcb->id == idletcb->id)
+                return ;//only idle task remain, return to restart schedule
+        }
     }
+    
+    if(runningtcb == idletcb) {idletcb = NULL;myPrintk(0x7,"hereidle\n");}
+    if(runningtcb) {destroyTsk(runningtcb->id);myPrintk(0x7,"hereidle\n");}
+
+    // myPrintk(0x7,"heresche1\n");
     runningtcb = tsk;
+    myTCB* p = rdqueuehead.nexttcb;
+    myPrintk(0x7,"%d %d\n",(int)p,(int)(p->nexttcb));
+    myPrintk(0x7,"%d, %d\n",tsk->id,tsk->para->arrTime);
     tsk->state = RUNNING;
     // myPrintk(0x7,"running tsk id = %d\n",tsk->id);
     // while(1);
+    if(p){
+        for(;p;p = p->nexttcb){
+            myPrintk(0x7,"%d",p->para->priority);
+        } 
+        myPrintk(0x7,"\n");
+    }
     context_switch(&BspContext,tsk->tskptr);
 }
 

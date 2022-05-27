@@ -1,6 +1,7 @@
 #include "../include/vsprintf.h"
 
 int hh=0,mm=0,ss=0,ms=0;
+extern int check_flag;
 
 void setWallClock(int h, int m, int s){
         if ( (h<0) || (h>24) ) hh=0;
@@ -24,6 +25,8 @@ void setWallClockHook(void (*func)(void)) {
 
 void oneTickUpdateWallClock(void){
 	ms += 10;  // ?100HZ?
+        if(ms == 1000) check_flag = 1;
+        else check_flag = 0;
         if (ms>=1000) {ms=0;ss++;}
         if (ss>=60) {ss=0;mm++;}
         if (mm>=60) {mm=0;hh++;}

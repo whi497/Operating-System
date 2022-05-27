@@ -317,7 +317,7 @@ int testkmalloc(int argc, unsigned char **argv){
 	myPrintf(0x7,"(some have already be used for registered cmds, in this test we do not show all of them)\n");
 	showpartofEMB(pMemHandler);
 	myPrintf(0x7,"The two part of memorys are seperate by a block with 0x1000 bytes to prevent overflow\n\n");
-	myPrintk(0x7,"press any key to continue ...\n");
+	myPrintf(0x7,"press any key to continue ...\n");
 	uart_get_char();
 
 	myPrintf(0x7,"\nnow we kmalloc() a small block with 0x100bytes and malloc() another block with same size\n");
@@ -329,7 +329,7 @@ int testkmalloc(int argc, unsigned char **argv){
 	dPartitionWalkByAddr(kpMemHandler);
 	myPrintf(0x7,"User memory:\n");
 	showpartofEMB(pMemHandler);
-	myPrintk(0x7,"press any key to continue ...\n");
+	myPrintf(0x7,"press any key to continue ...\n");
 	uart_get_char();
 	
 	char* buffer1 = (char*)kmem;
@@ -349,7 +349,7 @@ int testkmalloc(int argc, unsigned char **argv){
 	myPrintf(0x5, "BUF2(size=0x100, addr=0x%x) filled with 12(#): ", (unsigned long)buffer2);
 	myPrintf(0x7,buffer2);
 	myPrintf(0x7,"\n");
-	myPrintk(0x7,"press any key to continue ...\n");
+	myPrintf(0x7,"press any key to continue ...\n");
 	uart_get_char();
 
 	myPrintf(0x7,"\nnow we free them\n");

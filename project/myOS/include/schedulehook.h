@@ -24,7 +24,7 @@ myTCB rdqueuehead; //就绪队列，schedule()执行时总是取位于队头的�
 extern struct scheduler sche_PRIO;
 
 //使用define避免单开一个.c文件
-#define setSysScheduler(what){ \ 
+#define setSysScheduler(what){ \
     switch(what){ \
         case SCHEDULER_FCFS: break; \
         case SCHEDULER_SJF: break; \

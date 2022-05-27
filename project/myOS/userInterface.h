@@ -9,6 +9,7 @@
 #include "include/vsprintf.h"
 #include "include/string.h"
 #include "include/schedulehook.h"
+#include "include/task_arr.h"
 
 //only for userApp
 #include "include/malloc.h"

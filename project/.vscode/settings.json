@@ -11,6 +11,8 @@
         "kmalloc.h": "c",
         "irq.h": "c",
         "priority.h": "c",
-        "usertask.h": "c"
+        "usertask.h": "c",
+        "myprintk.h": "c",
+        "task_arr.h": "c"
     }
 }

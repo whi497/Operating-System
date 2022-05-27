@@ -6,7 +6,7 @@
 #define initTskBdy myMain//对接main
 
 #define KSTKSIZE 0x2000
-#define TSK_STK_SIZE 0x500
+#define TSK_STK_SIZE 0x1000
 #define TotalTCB 10
 #define MAXTSKSUM 10
 

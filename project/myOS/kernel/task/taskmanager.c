@@ -1,4 +1,5 @@
 #include "../../include/task.h"
+#include "../../include/task_arr.h"
 #include "../../include/kmalloc.h"
 #include "../../include/schedulehook.h"
 #include "../../include/irq.h"
@@ -109,17 +110,14 @@ void tskStart(myTCB *tsk){
 
 void tskEnd(void){
     unsigned long* ptr = runningtcb->tskptr;
-    if(runningtcb->id != idletcb->id)//不摧毁idletsk
-        destroyTsk(runningtcb->id);
-    else
-        tskStart(idletcb);//重启idle任务
+    destroyTsk(runningtcb->id);
     runningtcb = NULL;
     context_switch(&ptr, BspContext);
 }
 
 void startMultitask(void) {
     BspContext = BspContextBase + KSTKSIZE - 1;
-    myPrintk(0x7,"here\n");//debug
+    // myPrintk(0x7,"here\n");//debug
     while(1){
         sche.schedule();
     }
@@ -168,14 +166,14 @@ void iniTskManager(void){
     int inittid = createTsk(initTskBdy);
     inittcb = tcb_pool[inittid];
     setTskPara(PRIORITY,4,inittcb->para);
-    myPrintk(0x7,"initsk id = %d\n",inittcb->id);
+    // myPrintk(0x7,"initsk id = %d\n",inittcb->id);
     int idletid = createTsk(idleTskBdy);
-    setTskPara(PRIORITY, 0, idletcb->para);
     idletcb = tcb_pool[idletid];
-    myPrintk(0x7,"idletsk id = %d\n",idletcb->id);
+    setTskPara(PRIORITY, 0, idletcb->para);
+    // myPrintk(0x7,"idletsk id = %d\n",idletcb->id);
     
-    tskStart(tcb_pool[inittcb->id]);
-    tskStart(tcb_pool[idletcb->id]);
+    launchtsk(tcb_pool[inittcb->id],0);
+    launchtsk(tcb_pool[idletcb->id],0);
     //myPrintk(0x7,"here0")
     // while(1);//debug
     startMultitask();

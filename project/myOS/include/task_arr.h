@@ -6,6 +6,6 @@ myTCB arrqueue;
 
 void iniarrqueue(void);
 void eqbyarrtime(myTCB* task);
-void raisetsk(myTCB* task,int arrtime);
+void launchtsk(myTCB* task,int arrtime);
 
 #endif
