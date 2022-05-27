@@ -1,0 +1,1 @@
+SCHEDULER_OBJS = output/myOS/kernel/scheduler/priority.o

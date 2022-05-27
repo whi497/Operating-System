@@ -4,6 +4,7 @@
 #include "include/uart.h"
 #include "include/vga.h"
 #include "include/mem.h"
+#include "include/task.h"
 #include "include/myPrintk.h"
 
 extern void myMain(void);		//TODO: to be generalized
@@ -39,7 +40,7 @@ void osStart(void){
 	// NOW, run userApp
 	// while(1);//debug
 	myPrintk(0x2,"START RUNNING......\n");	
-	myMain();
+	iniTskManager();
 	myPrintk(0x2, "STOP RUNNING......ShutDown\n");
 	while(1);
 }

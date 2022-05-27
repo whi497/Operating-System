@@ -2,6 +2,7 @@
 
 #include "shell.h"
 #include "memTestCase.h"
+#include "usertask.h"
 
 void wallClock_hook_main(void){
 	int _h, _m, _s;
@@ -19,10 +20,18 @@ void doSomeTestBefore(void){
 
 void myMain(void){    
     clear_screen();
+	myPrintf(0x7, "===============Initial Task===============\n");
+	myPrintf(0x7, "            Initial user task...        \n\n");
 
     doSomeTestBefore();
-	initShell();
-    memTestCaseInit();
-    startShell();
+	
+	test_prio_sche();
+
+	myTCB* ptr = rdqueuehead.nexttcb;
+	// for(;ptr;ptr = ptr->nexttcb){//debug
+	// 	myPrintf(0x7,"%d",ptr->para->priority);
+	// }
+	// myPrintf(0x7,"\n");
+	// while(1);
     return;
 }

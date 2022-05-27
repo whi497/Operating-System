@@ -99,6 +99,14 @@ int help(int argc, unsigned char **argv){
     return 0;
 }
 
+int func_time(int argc, char **argv){
+    if(argc != 1) myPrintf(14,"notices: time needs no args\n");
+    int h,m,s;
+    h=0;m=0;s=0;
+    getWallClock(&h,&m,&s);
+    myPrintf(0x07,"%02d:%02d:%02d\n",h,m,s);
+}
+
 struct cmd *findCmd(unsigned char *cmd){
         struct cmd * tmpCmd = ourCmds;
 	int found = 0;
@@ -139,6 +147,7 @@ int split2Words(unsigned char *cmdline, unsigned char **argv, int limit){
 void initShell(void){
     addNewCmd("cmd\0",listCmds,NULL,"list all registered commands\0");
     addNewCmd("help\0",help,help_help,"help [cmd]\0");
+    addNewCmd("time\0",func_time,NULL,"show current time\0");
     //TODO: may be we can add a new command exit or quit
 }
 

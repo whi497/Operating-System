@@ -190,7 +190,7 @@ int testeFP(int argc, unsigned char **argv){
 		xHandler = eFPartitionInit(x,psize,n);
 
 		eFPartitionWalkByAddr(xHandler);
-		myPrintk(0x7,"press any key to continue ...\n");//add
+		myPrintf(0x7,"press any key to continue ...\n");//add
 		uart_get_char();
 
 		x1 = eFPartitionAlloc(xHandler);
@@ -227,7 +227,7 @@ int testeFP(int argc, unsigned char **argv){
 			myPrintf(0x7,"Alloc memBlock E, start = 0x%x: 0x%x \n",x5,*(unsigned long *)x5);
 		} else myPrintf(0x7,"Alloc memBlock E, failed!\n");
 		eFPartitionWalkByAddr(xHandler);
-		myPrintk(0x7,"press any key to continue ...\n");//add
+		myPrintf(0x7,"press any key to continue ...\n");//add
 		uart_get_char();
 
 		myPrintf(0x7,"Now, release A.\n");
