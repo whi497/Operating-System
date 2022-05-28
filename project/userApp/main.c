@@ -27,8 +27,11 @@ void myMain(void){
 
 	switch(schepolicy){ 
         case SCHEDULER_FCFS: break; 
-        case SCHEDULER_SJF: break; 
-        case SCHEDULER_PRIORITY0: { 
+        case SCHEDULER_SJF: {
+			test_sjf_sche();
+			break; 
+		}
+        case SCHEDULER_PRIORITY1: { 
 			test_prio_sche();
             break; 
         } 
@@ -38,14 +41,14 @@ void myMain(void){
         } 
         default: break; 
     }
-	myPrintf(0x7,"waiting...\n");
-	wait(10);
-	myPrintf(0x7,"wait finish\n");	
+	// myPrintf(0x7,"waiting...\n");
+	// wait(5);
+	// myPrintf(0x7,"wait finish\n");	
 	// myTCB* ptr = rdqueuehead.nexttcb;
 	// for(;ptr;ptr = ptr->nexttcb){//debug
 	// 	myPrintf(0x7,"%d",ptr->para->priority);
 	// }
 	// myPrintf(0x7,"\n");
-	while(1);
+	// while(1);
     return;
 }

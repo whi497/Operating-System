@@ -1,42 +1,40 @@
-#include "../../include/priority.h"
+#include "../../include/sjf.h"
 #include "../../include/myPrintk.h"
 #include "../../include/irq.h"
 #include "../../include/task_arr.h"
 
-struct scheduler sche_PRIO = {
-    SCHEDULER_PRIORITY1,
+struct scheduler sche_SJF = {
+    SCHEDULER_SJF,
     NULL,
-    eqbypriority,
-    dqbypriority,
-    pri_initscheduler,
-    schedulebypriority,
-    pri_createTsk,
+    eq_sjf,
+    dq_sjf,
+    sjf_initscheduler,
+    schedulebysjf,
+    sjf_createTsk,
     NULL,
-    pri_tickhook,
+    NULL
 };
 
-void pri_initscheduler(void){
+void sjf_initscheduler(void){
     rdqueuehead.nexttcb = NULL;
 }
 
-void eqbypriority(myTCB* task){
+void eq_sjf(myTCB* task){
     myTCB* ptr = rdqueuehead.nexttcb;
     myTCB* preptr = &rdqueuehead;
 
     disable_interrupt();//入队保护
-    // myPrintk(0x7, "eq priority = %d\n", task->para->priority);//debug
     if(!rdqueuehead.nexttcb){
         rdqueuehead.nexttcb = task;
         task->nexttcb = NULL;
     }
     else{
         for(;ptr;ptr=ptr->nexttcb){
-            if(task->para->priority > ptr->para->priority){
+            if(task->para->exeTime < ptr->para->exeTime){
                 preptr->nexttcb = task;
                 task->nexttcb = ptr;
                 break;
             }
-            // if(ptr->nextTID 
             preptr = ptr;
         }
         if(!ptr){
@@ -44,18 +42,10 @@ void eqbypriority(myTCB* task){
             task->nexttcb = NULL;
         }
     }
-    // ptr = rdqueuehead.nexttcb;
-    // if(ptr->para->priority != 0){
-    //     for(;ptr;ptr = ptr->nexttcb){//debug
-    //         myPrintk(0x7,"%d",ptr->para->priority);
-    //     }
-    //     myPrintk(0x7,"\n");
-    //     myPrintk(0x7,"finishedeq\n");//debug
-    // }
     enable_interrupt();
 }
 
-myTCB* dqbypriority(void){
+myTCB* dq_sjf(void){
     if(!rdqueuehead.nexttcb)
         return NULL;
 
@@ -65,33 +55,20 @@ myTCB* dqbypriority(void){
         rdqueuehead.nexttcb = NULL;
     else
         rdqueuehead.nexttcb = rdqueuehead.nexttcb->nexttcb;
-    // myTCB* p = rdqueuehead.nexttcb;
-    // if(p){
-    //     for(;p;p = p->nexttcb){
-    //         myPrintk(0x7,"%d",p->para->priority);
-    //     } 
-    //     myPrintk(0x7,"\n");
-    //     myPrintk(0x7,"finisheddq\n");//debug
-    // }
+
     enable_interrupt();
 
     return ptr;
 }
 
-void schedulebypriority(void){
-    // if(p!=NULL){
-    //     for(;p;p = p->nexttcb){
-    //         myPrintk(0x7,"%d",p->para->priority);
-    //     } 
-    //     myPrintk(0x7,"\n");
-    // }
-    // while(1){
+void schedulebysjf(void){
+
     myTCB* tsk = rdqueuehead.nexttcb;
     if(rdqueuehead.nexttcb == NULL){//没有任务待执行则执行idle任务
         if(idletcb==NULL){//idle已被摧毁则重新创建并launch
             int idletid = createTsk(idleTskBdy);
             idletcb = tcb_pool[idletid];
-            setTskPara(PRIORITY, 0, idletcb->para);
+            setTskPara(EXETIME, 0, idletcb->para);
             launchtsk(idletcb,0);
             return ;
         }
@@ -99,7 +76,6 @@ void schedulebypriority(void){
         
     }
     else dqbypriority();
-    // myPrintk(0x7,"heresche0\n"); 
     if(tsk->id == idletcb->id){
         if(runningtcb){
             if(runningtcb->id == idletcb->id)
@@ -110,19 +86,19 @@ void schedulebypriority(void){
     if(runningtcb == idletcb) {idletcb = NULL;}//idle将被摧毁，置其指示指针为NULL
     if(runningtcb) {destroyTsk(runningtcb->id);}//摧毁当前任务（基于非抢占式，调度时认为任务已完成）
     runningtcb = tsk;
-    // myTCB* p = rdqueuehead.nexttcb;
-    // myPrintk(0x7,"%d %d\n",(int)p,(int)(p->nexttcb));
-    // myPrintk(0x7,"%d, %d\n",tsk->id,tsk->para->arrTime);
+    // myTCB* "%d, %d\n",tsk->id,tsk->para->arrTime);
     tsk->state = RUNNING;
-
+    myPrintk(0x7,"          ------running %d-------\n",tsk->id);
+    myPrintk(0x7,"               exetime: %d\n",runningtcb->para->exeTime);
+    myPrintk(0x7,"          ----------------------\n\n");
     context_switch(&BspContext,tsk->tskptr);
     // }
 }
 
-void pri_createTsk(myTCB* created){
+void sjf_createTsk(myTCB* created){
     return ;
 }
 
-void pri_tickhook(void){
+void sjf_tickhook(void){
     return ;
 }

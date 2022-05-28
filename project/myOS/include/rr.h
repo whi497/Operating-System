@@ -9,7 +9,7 @@ void schedulebyRR(void);
 void rr_tickhook(void);
 void rr_initscheduler(void);
 void rr_createTsk(myTCB* created);
-
+void rr_tskendhook(void);
 extern struct scheduler sche_RR;
 
 #endif

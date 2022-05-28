@@ -47,7 +47,7 @@ void context_switch(unsigned long **prevTskStkAddr, unsigned long *nextTskStk) {
 
 void stack_init(unsigned long **stk, void (*task)(void)) {
     *(*stk)-- = (unsigned long)0x08; // CS
-    *(*stk)-- = (unsigned long)tskEnd; 
+    *(*stk)-- = (unsigned long)tskEnd; //程序结束自动执行
     *(*stk)-- = (unsigned long)task; // eip
     // pushf
     *(*stk)-- = (unsigned long)0x0202; // flag registers
@@ -112,6 +112,7 @@ void tskStart(myTCB *tsk){
 
 void tskEnd(void){
     unsigned long* ptr = runningtcb->tskptr;
+    if(sche.tskend_hook)sche.tskend_hook();
     destroyTsk(runningtcb->id);//对于抢占式
     runningtcb = NULL;
     context_switch(&ptr, BspContext);
@@ -134,12 +135,28 @@ void idleTskBdy(void){
 }
 
 void iniTskManager(void){
+    myPrintk(0x7,"Initializing task manager...\n");
+    myPrintk(0x7, "choose a schedule policy\n");
+    myPrintk(0x7, "[1]SJF\n");
+    myPrintk(0x7, "[2]PRIORITY1\n");
+    myPrintk(0x7, "[3]RR\n");
+    char choice = uart_get_char();
+    uart_put_char('\n');
+    uart_put_char(choice);
+    uart_put_char('\n');
+    while((choice-48)<1 | (choice-48)>4){
+        myPrintk(0x7,"Invaild Input, try again\n");
+        choice = uart_get_char();
+    }
+    schepolicy = choice - 48;
+
     setSysScheduler(schepolicy);
 
     freetcb = NULL;
     inittcb = NULL;
     idletcb = NULL;
     runningtcb = NULL;
+    beforetcb = NULL;
     myTCB* ptr = NULL;
     myTCB* preptr = NULL;
     for(int i=0; i<TotalTCB; i++){

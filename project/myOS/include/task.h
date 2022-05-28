@@ -54,6 +54,7 @@ myTCB* freetcb;
 myTCB* inittcb;
 myTCB* idletcb;
 myTCB* runningtcb;
+myTCB* beforetcb;
 //keep the important task's tid
 
 void initTskBdy(void);

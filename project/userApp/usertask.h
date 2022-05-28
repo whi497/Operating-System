@@ -12,5 +12,6 @@ void ShellTask(void);
 
 void test_prio_sche(void);//test for prio_sche
 void test_rr_sche(void);
+void test_sjf_sche(void);
 
 #endif

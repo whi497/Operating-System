@@ -1,5 +1,6 @@
 extern void oneTickUpdateWallClock(void);       //TODO: to be generalized
-extern void taskCheck(void);     
+extern void taskCheck(void);
+extern void runtskhook(void);     
 //#ifndef __TICK_HOOK__
 //#define __TICK_HOOK__
 void (*tick_hook)(void) = 0; //{};
@@ -16,10 +17,11 @@ void tick(void){
 	oneTickUpdateWallClock();
 	if(check_flag){
 		// disable_interrupt();
-		myPrintk(0x7,"tick = %d\n",tick_number);
+		// myPrintk(0x7,"tick = %d\n",tick_number);
 		// while(1);
 		// enable_interrupt();//debug
 		taskCheck();
+		runtskhook();
 	}
 	/* call hooks 
 	scheduler_tick();  // RR

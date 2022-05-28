@@ -3,5 +3,6 @@
 
 void addTaskClockHook(void (*func)(void));
 void taskCheck(void);
+void runtskhook(void);
 
 #endif

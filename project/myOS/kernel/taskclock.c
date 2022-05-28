@@ -54,9 +54,13 @@ void taskCheck(void) {
         }
         else break;
     }
+    // enable_interrupt();
+}
+
+void runtskhook(void){
     for(int i=0;i<HOOK_LIST_SUM;i++){
+        // myPrintk(0x7,"here task hook\n");
         if(tskclklist[i])tskclklist[i]();
         else break;
     }
-    // enable_interrupt();
 }
